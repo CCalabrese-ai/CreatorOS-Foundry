@@ -1,0 +1,18 @@
+{
+  "name": "creator-os-foundry",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "node --test",
+    "validate": "npm test && npm run build"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "2.55.0"
+  },
+  "devDependencies": {
+    "vite": "7.3.6"
+  }
+}
