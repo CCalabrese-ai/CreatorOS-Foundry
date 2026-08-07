@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { getSupabaseConfig } from './config.js';
-import { createSystemRegistryService, deriveRegistryState } from './services/systemRegistryService.js';
+import { createSystemRegistryService, deriveRegistryState, isRenderableRegistryState } from './services/systemRegistryService.js';
+import { createObservability } from './services/observability.js';
 import './styles.css';
 
 const app = document.querySelector('#app');
@@ -9,9 +10,11 @@ const supabase = config.configured
   ? createClient(config.url, config.publishableKey, { auth: { persistSession: true, autoRefreshToken: true } })
   : null;
 const registry = supabase ? createSystemRegistryService(supabase) : null;
+const telemetry = createObservability();
 
 const state = {
   session: null,
+  workspace: null,
   records: [],
   summary: { total: 0, byType: {} },
   loading: false,
@@ -35,7 +38,8 @@ function render() {
     records: state.records,
     error: state.error,
     configured: config.configured,
-    authenticated: Boolean(state.session)
+    authenticated: Boolean(state.session),
+    workspace: state.workspace
   });
 
   app.innerHTML = `
@@ -60,7 +64,7 @@ function render() {
 
 function sessionControls() {
   if (!state.session) return '<span class="session-label">Secure workspace</span>';
-  return `<div class="session"><span>${escapeHtml(state.session.user.email)}</span><button class="button ghost" data-action="sign-out">Sign out</button></div>`;
+  return `<div class="session"><span>${escapeHtml(state.workspace?.display_name ?? 'Resolving workspace…')}</span><button class="button ghost" data-action="sign-out">Sign out</button></div>`;
 }
 
 function signInView(viewState) {
@@ -77,7 +81,8 @@ function registryView(viewState) {
       <div class="panel-heading"><div><p class="eyebrow">LIVE SUPABASE DATA</p><h2 id="records-title">Registry records</h2></div><button class="button ghost" data-action="refresh" ${state.loading ? 'disabled' : ''}>Refresh</button></div>
       <form id="filters" class="filters"><label>Type<select name="type">${filterOptions(['all','agent','tool','workflow','application','module','integration'],state.filters.type)}</select></label><label>Status<select name="status">${filterOptions(['all','proposed','approved','active','paused','restricted','deprecated','retired'],state.filters.status)}</select></label><label class="search">Search<input name="query" maxlength="80" value="${escapeHtml(state.filters.query)}" placeholder="Name or canonical ID"></label><button class="button primary" type="submit">Apply</button></form>
       <div class="state ${viewState.kind}" role="status" aria-live="polite">${state.loading ? '<span class="spinner" aria-hidden="true"></span> Loading registry…' : escapeHtml(viewState.message)}</div>
-      ${viewState.kind === 'success' ? recordList() : ''}
+      ${viewState.kind === 'unavailable' ? '<button class="button primary retry" data-action="refresh">Retry</button>' : ''}
+      ${isRenderableRegistryState(viewState.kind) ? recordList() : ''}
     </section>
     ${state.selected ? detailPanel(state.selected) : ''}
   </section>`;
@@ -92,17 +97,49 @@ function recordList() {
 }
 
 function detailPanel(record) {
-  return `<aside class="detail" aria-labelledby="detail-title"><button class="close" data-action="close-detail" aria-label="Close record details">×</button><p class="eyebrow">${escapeHtml(record.registry_type)} · ${escapeHtml(record.canonical_id)}</p><h2 id="detail-title">${escapeHtml(record.display_name)}</h2><p>${escapeHtml(record.description)}</p><dl><div><dt>Status</dt><dd>${escapeHtml(record.lifecycle_status)}</dd></div><div><dt>Owner</dt><dd>${escapeHtml(record.owner_role)}</dd></div><div><dt>Risk</dt><dd>${escapeHtml(record.risk_class)}</dd></div><div><dt>Version</dt><dd>${escapeHtml(record.semantic_version)}</dd></div><div><dt>Observed</dt><dd>${formatDate(record.observed_at)}</dd></div><div><dt>Sync</dt><dd>${escapeHtml(record.sync_status)}</dd></div></dl><div class="provenance"><p class="eyebrow">PROVENANCE</p><code>${escapeHtml(record.canonical_path)}</code><small>Commit ${escapeHtml(record.source_commit_sha.slice(0,12))}</small><small>Hash ${escapeHtml(record.content_hash.slice(0,16))}…</small></div></aside>`;
+  return `<aside class="detail" role="dialog" aria-modal="false" aria-labelledby="detail-title" aria-describedby="detail-description" tabindex="-1"><button class="close" data-action="close-detail" aria-label="Close record details">×</button><p class="eyebrow">${escapeHtml(record.registry_type)} · ${escapeHtml(record.canonical_id)}</p><h2 id="detail-title">${escapeHtml(record.display_name)}</h2><p id="detail-description">${escapeHtml(record.description)}</p><dl><div><dt>Status</dt><dd>${escapeHtml(record.lifecycle_status)}</dd></div><div><dt>Owner</dt><dd>${escapeHtml(record.owner_role)}</dd></div><div><dt>Risk</dt><dd>${escapeHtml(record.risk_class)}</dd></div><div><dt>Version</dt><dd>${escapeHtml(record.semantic_version)}</dd></div><div><dt>Observed</dt><dd>${formatDate(record.observed_at)}</dd></div><div><dt>Sync</dt><dd>${escapeHtml(record.sync_status)}</dd></div></dl><div class="provenance"><p class="eyebrow">PROVENANCE</p><code>${escapeHtml(record.canonical_path)}</code><small>Commit ${escapeHtml(record.source_commit_sha.slice(0,12))}</small><small>Hash ${escapeHtml(record.content_hash.slice(0,16))}…</small></div></aside>`;
+}
+
+async function resolveWorkspace() {
+  if (!registry || !state.session) return;
+  const workspaces = await registry.accessibleWorkspaces();
+  state.workspace = workspaces[0] ?? null;
+  telemetry.emit('registry.workspace.resolved', { workspaceId: state.workspace?.id, recordCount: workspaces.length });
+}
+
+async function initializeAuthorizedSession(session) {
+  state.session = session;
+  state.workspace = null;
+  state.records = [];
+  state.selected = null;
+  state.error = null;
+  render();
+  if (!session) return;
+  try {
+    await resolveWorkspace();
+    await loadRegistry();
+  } catch (error) {
+    state.error = error;
+    telemetry.emit('registry.load.failed', { durationMs: 0, state: 'workspace-unavailable', requestId: crypto.randomUUID() });
+    render();
+  }
 }
 
 async function loadRegistry() {
   if (!registry || !state.session) return;
+  if (!state.workspace) { render(); return; }
+  const startedAt = performance.now();
+  const requestId = crypto.randomUUID();
+  telemetry.emit('registry.load.started', { workspaceId: state.workspace.id, requestId });
   state.loading = true; state.error = null; render();
   try {
-    const result = await registry.list(state.filters);
+    const result = await registry.list(state.filters, state.workspace.id);
     state.records = result.records; state.summary = result.summary;
+    const outcome = deriveRegistryState({ records: state.records, configured: true, authenticated: true, workspace: state.workspace });
+    telemetry.emit(outcome.kind === 'success' ? 'registry.load.succeeded' : 'registry.load.degraded', { workspaceId: state.workspace.id, recordCount: state.records.length, durationMs: Math.round(performance.now() - startedAt), state: outcome.kind, requestId });
   } catch (error) {
     state.records = []; state.summary = { total: 0, byType: {} }; state.error = error;
+    telemetry.emit('registry.load.failed', { workspaceId: state.workspace.id, durationMs: Math.round(performance.now() - startedAt), state: 'unavailable', requestId });
   } finally { state.loading = false; render(); }
 }
 
@@ -117,20 +154,30 @@ function bindEvents() {
     status.textContent = error ? 'The sign-in link could not be sent.' : 'Check your email for the secure sign-in link.';
   });
   document.querySelector('#filters')?.addEventListener('submit', event => { event.preventDefault(); state.filters = Object.fromEntries(new FormData(event.currentTarget)); loadRegistry(); });
-  document.querySelectorAll('[data-id]').forEach(button => button.addEventListener('click', () => { state.selected = state.records.find(record => record.id === button.dataset.id); render(); }));
-  document.querySelector('[data-action="close-detail"]')?.addEventListener('click', () => { state.selected = null; render(); document.querySelector('[data-id]')?.focus(); });
+  document.querySelectorAll('[data-id]').forEach(button => button.addEventListener('click', () => { state.selected = state.records.find(record => record.id === button.dataset.id); render(); document.querySelector('[data-action="close-detail"]')?.focus(); }));
+  document.querySelector('[data-action="close-detail"]')?.addEventListener('click', closeDetail);
   document.querySelector('[data-action="refresh"]')?.addEventListener('click', loadRegistry);
-  document.querySelector('[data-action="sign-out"]')?.addEventListener('click', async () => { await supabase.auth.signOut(); state.session=null;state.records=[];state.selected=null;render(); });
+  document.querySelector('[data-action="sign-out"]')?.addEventListener('click', async () => { await supabase.auth.signOut(); state.session=null;state.workspace=null;state.records=[];state.selected=null;render(); });
 }
+
+function closeDetail() {
+  const selectedId = state.selected?.id;
+  state.selected = null;
+  render();
+  document.querySelector(`[data-id="${CSS.escape(selectedId ?? '')}"]`)?.focus();
+}
+
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && state.selected) closeDetail();
+});
 
 async function start() {
   if (supabase) {
     const { data } = await supabase.auth.getSession();
     state.session = data.session;
-    supabase.auth.onAuthStateChange((_event, session) => { state.session = session; state.records=[];state.selected=null;render();if(session)loadRegistry(); });
+    supabase.auth.onAuthStateChange((_event, session) => { void initializeAuthorizedSession(session); });
   }
-  render();
-  if (state.session) await loadRegistry();
+  await initializeAuthorizedSession(state.session);
 }
 
 start();

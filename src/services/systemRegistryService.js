@@ -16,23 +16,49 @@ export function summarize(records) {
   }, { total: 0, byType: {} });
 }
 
-export function deriveRegistryState({ records, error, configured, authenticated }) {
+export function deriveRegistryState({ records, error, configured, authenticated, workspace, now = Date.now() }) {
   if (!configured) return { kind: 'error', message: 'Supabase is not configured for this environment.' };
   if (!authenticated) return { kind: 'signed-out', message: 'Sign in to view the System Registry.' };
-  if (error) return { kind: 'error', message: 'The registry could not be loaded. Try again.' };
+  if (error) return { kind: 'unavailable', message: 'The registry is temporarily unavailable. Retry the request.' };
+  if (!workspace) return { kind: 'unauthorized', message: 'No active Creator OS workspace membership is available.' };
   if (!records.length) return { kind: 'empty', message: 'No registry records match this view.' };
+  if (records.some(record => ['conflict', 'quarantined'].includes(record.sync_status))) {
+    return { kind: 'conflict', message: 'Registry conflicts require operator review. Verified records remain visible.' };
+  }
+  if (records.some(record => record.sync_status === 'partial')) {
+    return { kind: 'partial', message: 'Registry data is partial. Confirm provenance before acting.' };
+  }
+  const staleCutoff = now - (24 * 60 * 60 * 1000);
+  if (records.some(record => record.sync_status === 'stale' || Date.parse(record.observed_at) < staleCutoff)) {
+    return { kind: 'stale', message: 'Registry data may be stale. Refresh or verify canonical sources.' };
+  }
   return { kind: 'success', message: `${records.length} registry records loaded.` };
+}
+
+export function isRenderableRegistryState(kind) {
+  return ['success', 'stale', 'partial', 'conflict'].includes(kind);
 }
 
 export function createSystemRegistryService(supabase) {
   if (!supabase) throw new TypeError('A Supabase client is required.');
 
   return {
-    async list(filters = {}) {
+    async accessibleWorkspaces() {
+      const { data, error } = await supabase
+        .from('creator_os_workspaces')
+        .select('id,slug,display_name,lifecycle_status')
+        .order('display_name', { ascending: true });
+      if (error) throw new Error(error.message, { cause: error });
+      return data ?? [];
+    },
+
+    async list(filters = {}, workspaceId) {
+      if (!workspaceId) throw new TypeError('An authorized workspace is required.');
       const normalized = normalizeFilters(filters);
       let request = supabase
         .from('system_registry_records')
-        .select('id,registry_type,canonical_id,display_name,description,owner_role,semantic_version,lifecycle_status,risk_class,canonical_path,source_commit_sha,content_hash,observed_at,sync_status')
+        .select('id,workspace_id,registry_type,canonical_id,display_name,description,owner_role,semantic_version,lifecycle_status,risk_class,canonical_path,source_commit_sha,content_hash,observed_at,sync_status')
+        .eq('workspace_id', workspaceId)
         .order('registry_type', { ascending: true })
         .order('canonical_id', { ascending: true })
         .limit(100);

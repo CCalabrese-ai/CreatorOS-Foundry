@@ -9,6 +9,8 @@
 **Release candidate:** 1.0.0  
 **Release status:** Not Released
 
+> **Phase 4.9 update (2026-08-07):** All implemented technical readiness gates now pass. Workspace authorization, degraded-state handling, observability, accessibility focus remediation, runtime enforcement, and immutable candidate artifacts are evidenced. Release remains **Not Released** until named Product, Application, Data, Security, Quality, and Release Owner decisions are recorded.
+
 > **Phase 4.8 readiness update (2026-08-07):** Denial, resilience, accessibility, and application rollback validation has been executed and recorded. The application remains **Not Released** because workspace-aware authorization, complete degraded states, accessibility follow-up, production recovery and artifact evidence, observability, and accountable-owner approvals are still required. See `COS-MVP-001_Phase_4.8_Release_Readiness_Validation.md`.
 
 ## Purpose

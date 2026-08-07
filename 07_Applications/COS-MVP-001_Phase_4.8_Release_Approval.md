@@ -8,6 +8,8 @@
 **Application ID:** COS-MVP-001  
 **Release status:** Not Released
 
+> **Superseded technical findings:** Phase 4.9 remediated the workspace authorization, degraded-state, accessibility-focus, runtime, privileged-helper, and immutable-artifact gaps. See `COS-MVP-001_Phase_4.9_Production_Readiness_Completion.md`. Accountable-owner approval remains pending, so the release status is unchanged.
+
 ## Approval Rule
 
 No owner may approve by inference. Every blocking gate must pass with attributable evidence, and the Release Owner must record the final decision only after all required owner decisions are present.

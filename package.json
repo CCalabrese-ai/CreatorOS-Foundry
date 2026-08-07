@@ -3,11 +3,15 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=20.19.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "test": "node --test",
-    "validate": "npm test && npm run build"
+    "validate": "npm test && npm run build",
+    "release:manifest": "node 07_Applications/scripts/create-release-manifest.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "2.55.0"
