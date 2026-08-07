@@ -39,4 +39,6 @@ test('implements keyboard-compatible controls and explicit detail focus handling
   assert.match(main, /document\.querySelector\('\[data-action="close-detail"\]'\)\?\.focus\(\)/);
   assert.match(main, /event\.key === 'Escape'/);
   assert.match(main, /data-action="close-detail" aria-label="Close document details"/);
+  assert.match(main, /state\.documents\.detailOriginId = id/);
+  assert.match(main, /data-document-id=.*CSS\.escape\(documentOriginId\)/s);
 });

@@ -18,7 +18,7 @@ const telemetry = createObservability();
 const state = {
   session: null, workspace: null, activeView: 'documents', loading: false, error: null,
   systems: { records: [], summary: { total: 0, byType: {} }, selected: null, filters: { type: 'all', status: 'all', query: '' } },
-  documents: { records: [], summary: { total: 0, byStatus: {} }, selected: null, detail: null, detailLoading: false, filters: { category: 'all', status: 'all', query: '' }, showCreate: false, createStatus: '' }
+  documents: { records: [], summary: { total: 0, byStatus: {} }, selected: null, detail: null, detailLoading: false, detailOriginId: null, filters: { category: 'all', status: 'all', query: '' }, showCreate: false, createStatus: '' }
 };
 
 function escapeHtml(value) {
@@ -154,6 +154,7 @@ async function loadActiveView() {
 }
 
 async function openDocument(id) {
+  state.documents.detailOriginId = id;
   state.documents.selected = state.documents.records.find(record => record.id === id);
   state.documents.detail = null; state.documents.detailLoading = true; render(); document.querySelector('[data-action="close-detail"]')?.focus();
   try { state.documents.detail = await documents.detail(id, state.workspace.id); telemetry.emit('documents.detail.succeeded', { workspaceId: state.workspace.id, recordCount: state.documents.detail.versions.length }); }
@@ -183,7 +184,17 @@ async function createDocument(event) {
   catch (error) { state.documents.createStatus = error.message; telemetry.emit('documents.create.failed', { workspaceId: state.workspace.id, state: 'validation-or-write-failed' }); render(); }
 }
 
-function closeDetail() { state.systems.selected = null; state.documents.selected = null; state.documents.detail = null; render(); }
+function closeDetail() {
+  const documentOriginId = state.documents.detailOriginId;
+  const systemOriginId = state.systems.selected?.id;
+  state.systems.selected = null;
+  state.documents.selected = null;
+  state.documents.detail = null;
+  state.documents.detailOriginId = null;
+  render();
+  if (documentOriginId) document.querySelector(`[data-document-id="${CSS.escape(documentOriginId)}"]`)?.focus();
+  else if (systemOriginId) document.querySelector(`[data-system-id="${CSS.escape(systemOriginId)}"]`)?.focus();
+}
 
 document.addEventListener('keydown', event => { if (event.key === 'Escape' && (state.systems.selected || state.documents.selected)) closeDetail(); });
 

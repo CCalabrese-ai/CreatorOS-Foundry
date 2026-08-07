@@ -133,6 +133,23 @@ export function createDocumentRegistryService(supabase) {
       });
       if (error) throw new Error(error.message, { cause: error });
       return { id: data, documentId: value.documentId };
+    },
+
+    async transition({ documentId, toState, actorUserId, provenanceId, reason, workflowEvidenceId = null, approvalEvidenceId = null }, workspaceId) {
+      if (!workspaceId || !documentId || !actorUserId || !provenanceId) throw new TypeError('Workspace, document, actor, and provenance are required.');
+      if (!ALLOWED_STATUSES.has(toState)) throw new TypeError('Lifecycle state is not supported.');
+      const normalizedReason = String(reason ?? '').trim();
+      if (normalizedReason.length < 8) throw new TypeError('A lifecycle reason of at least 8 characters is required.');
+      if (toState === 'published' && (!workflowEvidenceId || !approvalEvidenceId)) {
+        throw new TypeError('Publication requires workflow and approval evidence.');
+      }
+      const { data, error } = await supabase.rpc('transition_document_lifecycle', {
+        p_document_id: documentId, p_to_state: toState, p_actor_user_id: actorUserId,
+        p_provenance_id: provenanceId, p_reason: normalizedReason,
+        p_workflow_evidence_id: workflowEvidenceId, p_approval_evidence_id: approvalEvidenceId
+      });
+      if (error) throw new Error(error.message, { cause: error });
+      return { eventId: data, toState };
     }
   };
 }
