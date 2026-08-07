@@ -60,6 +60,10 @@ Because the governance gate is incomplete:
 
 When the blockers are resolved, update the canonical approval matrix with attributable evidence, rerun candidate-integrity checks, and issue a new release decision. Only an explicit six-role approval set and final Release Owner `Go` decision authorize creation of `cos-mvp-001-v1.0.0` and the official released-state record.
 
+## Phase 5.2 Resolution Update
+
+The candidate-corruption and manifest-mismatch blockers are resolved with current passing evidence. The No-Go decision remains in force because zero of six accountable-owner approvals are recorded, launch-time operational assignments remain incomplete, and no Release Owner `Go` decision exists. The release remains **Not Released** and the version tag remains uncreated.
+
 ## References
 
 - `07_Applications/COS-MVP-001_Phase_5.1_Owner_Approval_Workflow.md`
@@ -67,3 +71,4 @@ When the blockers are resolved, update the canonical approval matrix with attrib
 - `07_Applications/COS-MVP-001_Phase_5.0_Release_Approval_Record.md`
 - `07_Applications/COS-MVP-001_Phase_5.0_Launch_Checklist.md`
 - `07_Applications/COS-MVP-001_Phase_5.0_Version_Tagging_Plan.md`
+- `07_Applications/COS-MVP-001_Phase_5.2_Release_Blocker_Resolution.md`

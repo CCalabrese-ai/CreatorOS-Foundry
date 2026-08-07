@@ -56,13 +56,15 @@ Each approver must record their name or authorized identity, decision, UTC date/
 
 | Measure | Result |
 | --- | --- |
-| Technical gates passing | 0 currently releasable; 3 historical passes require revalidation; 3 blocked or failed |
+| Technical gates passing | 6 of 6 after Phase 5.2 repair and revalidation |
 | Required approvals recorded | 0 of 6 |
 | Release Owner go decision | Withheld |
 | Version tag created | No |
 | Official released-state record created | No |
 
 The current candidate fails before test execution because `src/services/observability.js` contains release-manifest JSON. Its 2,837-byte content and SHA-256 digest do not match the 899-byte immutable-manifest entry. See the Phase 5.1 gate verification for reproduction evidence.
+
+> **Phase 5.2 resolution:** The observability implementation is restored, 10/10 tests and the production build pass, and all regenerated artifact checksums verify. Technical readiness is current again; approvals remain 0 of 6 and release status remains **Not Released**.
 
 ## References
 

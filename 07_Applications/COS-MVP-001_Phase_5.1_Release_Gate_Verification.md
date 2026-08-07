@@ -3,7 +3,7 @@
 **Phase:** 5.1 — Release Approval Completion  
 **Version:** 1.0  
 **Document owner:** Quality Owner and Release Owner  
-**Status:** Release Gates Blocked  
+**Status:** Superseded by Phase 5.2 Technical Revalidation
 **Risk class:** High  
 **Application ID:** COS-MVP-001  
 **Release status:** Not Released
@@ -54,6 +54,10 @@ Historical release evidence reports completed technical validation. A fresh Phas
 ## Decision
 
 Technical readiness is **not currently reproducible**. Release authorization is blocked by candidate corruption, manifest mismatch, and the absence of every required approval. The release remains **Not Released**.
+
+## Phase 5.2 Resolution Update
+
+Phase 5.2 restored the validated observability implementation, passed all 10 automated tests and the production build, and independently verified every regenerated manifest checksum. The six technical gates are again supported by current evidence. Release authorization remains blocked solely by outstanding accountable-owner approvals and launch-time operational assignments. See `COS-MVP-001_Phase_5.2_Release_Blocker_Resolution.md`.
 
 ## References
 

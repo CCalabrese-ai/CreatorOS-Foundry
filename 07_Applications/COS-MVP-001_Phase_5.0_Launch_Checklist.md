@@ -73,8 +73,8 @@ No unchecked item may be treated as satisfied by implication. The Release Owner 
 - [ ] Security Owner approval recorded.
 - [ ] Quality Owner approval recorded.
 - [ ] Release Owner final go decision recorded.
-- [ ] Valid observability implementation restored and reviewed.
-- [ ] Repaired candidate passes the full validation suite.
-- [ ] Repaired candidate matches a regenerated immutable manifest.
+- [x] Valid observability implementation restored and reviewed.
+- [x] Repaired candidate passes the full validation suite.
+- [x] Repaired candidate matches a regenerated immutable manifest.
 
 The Phase 5.1 completion review does not authorize launch. See `COS-MVP-001_Phase_5.1_Final_Release_Decision_Record.md`.

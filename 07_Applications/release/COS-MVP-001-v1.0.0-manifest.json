@@ -3,7 +3,7 @@
   "releaseId": "COS-MVP-001-v1.0.0",
   "applicationId": "COS-MVP-001",
   "semanticVersion": "1.0.0",
-  "sourceBaseCommit": "d01a4a3cfac759b3e2f3b7799b345f8585a9c900",
+  "sourceBaseCommit": "fadf8a666923a032d5364557c9365c5c84c5db55",
   "sourceDigest": "a59629d69b4fe560b5dd8bc7f3a527fe38a146a5acea52696e5d43e6a32bb5af",
   "buildDigest": "e908cb1cabe704ef0d77e732b59a957f6d4f20a1758231054d0e86120f84acb7",
   "migrationVersions": [

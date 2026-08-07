@@ -1,91 +1,26 @@
-{
-  "schemaVersion": 1,
-  "releaseId": "COS-MVP-001-v1.0.0",
-  "applicationId": "COS-MVP-001",
-  "semanticVersion": "1.0.0",
-  "sourceBaseCommit": "d01a4a3cfac759b3e2f3b7799b345f8585a9c900",
-  "sourceDigest": "b591db018268584c5cf256cf5ad78254b3cfd1a827c1945506ad2d4c767d24f7",
-  "buildDigest": "e908cb1cabe704ef0d77e732b59a957f6d4f20a1758231054d0e86120f84acb7",
-  "migrationVersions": [
-    "20260807032902",
-    "20260807033758"
-  ],
-  "runtime": {
-    "node": "24",
-    "minimumNode": "20.19.0"
-  },
-  "sourceFiles": [
-    {
-      "path": "index.html",
-      "bytes": 478,
-      "sha256": "7ff93b291702efe0b3f4c36a678f33eea739cd391c7dc706ba8be2e0e2e3143b"
-    },
-    {
-      "path": "package.json",
-      "bytes": 456,
-      "sha256": "63487006cc334f2e245a2be45a55759c7b5573517763789d04ebe8d3160430cc"
-    },
-    {
-      "path": "package-lock.json",
-      "bytes": 41532,
-      "sha256": "fd4f99ee74bca3348caa77e5ef770216906c11c5d5266112918319d1c471007b"
-    },
-    {
-      "path": "src/config.js",
-      "bytes": 375,
-      "sha256": "58204ddbab9c4af961235afb7fc7ca9c2af4bcf0d558520a1ee015837fe6a86d"
-    },
-    {
-      "path": "src/main.js",
-      "bytes": 11253,
-      "sha256": "0dd2ebf6bdbef8e278c9237f18d119fbe5b2cd6b7ee2dd58cc0f05aa53d39fe7"
-    },
-    {
-      "path": "src/services/observability.js",
-      "bytes": 899,
-      "sha256": "00a0c1da6580d1d176b60fcc20c7bbb7777773cfdbdbe7c03cfc45086879becb"
-    },
-    {
-      "path": "src/services/systemRegistryService.js",
-      "bytes": 4057,
-      "sha256": "6c1287578dc894aaa71b2bcb94aa54cd0bc77fad4bf19c7c366d3b256a1d6847"
-    },
-    {
-      "path": "src/styles.css",
-      "bytes": 5578,
-      "sha256": "6fbf70cdba1f7e2ddcd71668a3c974a2d1e21167b47652b76005f3c268a8ad3b"
-    },
-    {
-      "path": "supabase/migrations/20260807032902_cos_mvp_001_production_readiness_v1.sql",
-      "bytes": 4585,
-      "sha256": "3636642924d5decd8c3c991d0bc1465a6101aee333a9a20cbdff5a408b3d0aad"
-    },
-    {
-      "path": "supabase/migrations/20260807033758_restrict_rls_auto_enable_execution_v1.sql",
-      "bytes": 154,
-      "sha256": "29d38b25092cdf9d76cb733dbfd49391d5b73246a48868ac0dbd1e3593717e48"
-    },
-    {
-      "path": "test/systemRegistryService.test.js",
-      "bytes": 5870,
-      "sha256": "f5b0650465fc2d60839ec513d1d2d1c43d05de6741c3d14bfab302d99eccb1dc"
+const ALLOWED_EVENTS = new Set([
+  'registry.workspace.resolved',
+  'registry.load.started',
+  'registry.load.succeeded',
+  'registry.load.degraded',
+  'registry.load.failed'
+]);
+
+function sanitize(detail = {}) {
+  return Object.fromEntries(Object.entries(detail).filter(([key, value]) =>
+    ['workspaceId', 'recordCount', 'durationMs', 'state', 'requestId'].includes(key)
+      && ['string', 'number'].includes(typeof value)
+  ));
+}
+
+export function createObservability(sink = console) {
+  return {
+    emit(event, detail = {}) {
+      if (!ALLOWED_EVENTS.has(event)) throw new TypeError('Unsupported observability event.');
+      const entry = { event, timestamp: new Date().toISOString(), ...sanitize(detail) };
+      const method = event.endsWith('.failed') ? 'error' : event.endsWith('.degraded') ? 'warn' : 'info';
+      sink[method]?.('[CreatorOS]', entry);
+      return entry;
     }
-  ],
-  "buildFiles": [
-    {
-      "path": "dist/assets/index-8Vz-ttZ3.css",
-      "bytes": 5613,
-      "sha256": "86f49b6fb1e4ac2c044e42eda9f90e9b75c81f44e51b40631ee6d6e7af6aa7a7"
-    },
-    {
-      "path": "dist/assets/index-DZ917YQO.js",
-      "bytes": 151465,
-      "sha256": "d769aeee614a13957661800d5e7393c0a18f6e864fab858569e450e40553b6bd"
-    },
-    {
-      "path": "dist/index.html",
-      "bytes": 577,
-      "sha256": "789bf70ec9efa9a038b7ff08c7bb72204bd5e781a51329cc39639ab2e139c044"
-    }
-  ]
+  };
 }
