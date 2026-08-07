@@ -1,11 +1,11 @@
 # COS-MVP-001 Phase 5.5 GitHub Publication Blocker
 
-**Phase:** 5.5 — Release Authority Assignment and Final Approval  
-**Version:** 1.0  
-**Document owner:** Repository Administrator  
-**Status:** Publication Blocked  
-**Risk class:** Medium  
-**Application ID:** COS-MVP-001  
+**Phase:** 5.5 — Release Authority Assignment and Final Approval
+**Version:** 1.0
+**Document owner:** Repository Administrator
+**Status:** Resolved in Phase 5.11
+**Risk class:** Medium
+**Application ID:** COS-MVP-001
 **Release status:** Not Released
 
 ## Purpose
@@ -20,9 +20,9 @@ This record separates repository publication access from COS-MVP-001 technical r
 | GitHub repository | `CCalabrese-ai/CreatorOS-Foundry` |
 | Remote `main` baseline observed | `e017b0c3475576a7a6d6326187b295c105c60990` |
 | Local commits after remote baseline | Phase 5.0 through Phase 5.5 governance and repair history |
-| Command-line GitHub credential | Unavailable to the current execution environment |
+| Command-line GitHub credential | Restored through authenticated GitHub CLI in Phase 5.11 |
 | GitHub integration write result | `403 Resource not accessible by integration` |
-| Publication status | Blocked |
+| Publication status | Restored; complete Phase 5.10 history published |
 
 ## Separation of Concerns
 
@@ -64,6 +64,12 @@ At `2026-08-07T12:39:46Z`, a direct remote query succeeded and returned authorit
 ## Phase 5.9 Publication Attempt
 
 At `2026-08-07T13:05:03Z`, the authoritative remote was queried again and remained at `e017b0c3475576a7a6d6326187b295c105c60990`; remote `phase-5-release` remained absent. A fast-forward HTTPS publication attempt failed because the local Git process had no GitHub username or credential. Browser authentication did not provide local Git credentials. Publication remains blocked and the release tag remains unauthorized.
+
+## Phase 5.11 Resolution
+
+GitHub CLI 2.97.0 was authenticated as `CCalabrese-ai` with repository scope and configured as the Git HTTPS credential helper. The connected integration retained repository and Contents read access but returned `403 Resource not accessible by integration` for a Git Data write, so it remains read-only for publication.
+
+The approved CLI path fast-forwarded remote `main` from `e017b0c3475576a7a6d6326187b295c105c60990` to Phase 5.10 candidate `f237ed58812f965bec8134ae207f1d3c08262443`. Direct Git and GitHub API queries both confirmed the authoritative commit. The publication-access blocker is resolved. Release status remains **Not Released**, and no tag or release record was created.
 
 ## References
 

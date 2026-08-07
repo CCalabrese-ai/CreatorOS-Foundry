@@ -6,7 +6,7 @@
 **Candidate identifier:** COS-MVP-001 v1.0.0-internal
 **Intended tag:** `cos-mvp-001-v1.0.0-internal`
 **Release classification:** Internal MVP
-**Status:** Prepared — Authoritative Publication Blocked
+**Status:** Prepared — Publication Authority Restored
 **Application ID:** COS-MVP-001
 **Release status:** Not Released
 
@@ -57,6 +57,12 @@ Production backup/PITR validation, recovery evidence, alert-delivery receipt ver
 **No-Go — Not Released.** All Internal MVP criteria except authoritative repository publication are satisfied. Do not create `cos-mvp-001-v1.0.0-internal` until remote `main` contains the complete history and the final Phase 5.10 commit is verified as the intended immutable target.
 
 No production release record is created by this document.
+
+## Phase 5.11 Publication Update
+
+Authenticated GitHub CLI restored the repository write path. Remote `main` was fast-forwarded to `f237ed58812f965bec8134ae207f1d3c08262443`, and direct Git plus GitHub API verification confirmed that the authoritative repository contains the complete Phase 5.10 release history.
+
+This resolves publication authority but does not independently authorize the internal tag or Internal MVP Released state. Phase 5.11 expressly prohibits tags and release records; the next release decision must recheck the final authoritative commit after the Phase 5.11 evidence commit is published.
 
 ## Publication Completion Procedure
 
