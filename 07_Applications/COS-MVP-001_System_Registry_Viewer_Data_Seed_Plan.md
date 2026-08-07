@@ -1,106 +1,100 @@
-# COS-MVP-001 System Registry Viewer Execution Checklist
+# COS-MVP-001 System Registry Viewer Data Seed Plan
 
 **Phase:** 4.4 — MVP Build Execution  
 **Version:** 1.0  
-**Document owner:** Project Operations Owner and Release Owner  
+**Document owner:** Data Owner, Quality Owner, and Security Owner  
 **Status:** Proposed  
 **Risk class:** High  
-**Checklist ID:** COS-MVP-001-EXEC-v1
+**Seed ID:** COS-MVP-001-SEED-v1
 
 ## Purpose
 
-This checklist controls implementation, verification, preview, and release decision activities for COS-MVP-001.
+This plan defines deterministic, synthetic data for implementing and validating the System Registry Viewer without production or personal data.
 
-## Scope and Readiness
+## Seed Principles
 
-- [ ] Approved build, seed, testing, and release documents are identified.
-- [ ] Owners, reviewers, environment, risk, dependencies, and timebox are recorded.
-- [ ] Source branch and commit are clean and traceable.
-- [ ] In-scope and excluded behavior are confirmed.
-- [ ] Data classification, threat considerations, and rollback path are reviewed.
-- [ ] No production data or credentials are required.
+Seeds are repeatable, reviewable, idempotent where practical, traceable to a seed version, and safe for local or isolated preview environments. Fixed identifiers, ordered inserts, and controlled timestamps make assertions stable. Seed execution must fail if it targets an unapproved environment.
 
-## Repository and Build
+## Identity and Workspace Matrix
 
-- [ ] Runtime, package manager, Supabase CLI, and dependencies are pinned.
-- [ ] Lockfile install, format, lint, type, unit, and build checks pass.
-- [ ] Environment schema fails closed for missing or unsafe configuration.
-- [ ] Client artifact scan finds no privileged key, token, or secret.
-- [ ] Release and contract identifiers appear in safe diagnostics.
+Create synthetic users for an authorized viewer, a second-workspace member, an expired member, a user with no workspace, and a disabled user. Create two active workspaces plus one suspended workspace. Assign least-privilege roles and memberships so positive, denied, expired, suspended, and cross-workspace paths are all testable.
 
-## Supabase and Seed
+## Registry Records
 
-- [ ] Local or isolated preview target is confirmed before mutation.
-- [ ] Clean database reset applies the approved migrations.
-- [ ] Explicit Data API exposure, grants, and RLS are reviewed.
-- [ ] Generated database types match the rebuilt schema.
-- [ ] COS-MVP-001-SEED-v1 loads deterministically.
-- [ ] Seed counts, relationships, order, hashes, and states match the manifest.
-- [ ] Anonymous, expired, suspended, cross-workspace, and direct-write tests fail closed.
-- [ ] Query plans and indexes meet the approved budget.
+Seed representative active and deprecated records for each supported class:
 
-## Backend Execution
+| Type | Minimum examples | Required variation |
+| --- | ---: | --- |
+| AI agent | 4 | active, draft, deprecated |
+| Tool | 4 | approved, restricted, retired |
+| Workflow | 3 | active, paused, superseded |
+| Application | 2 | proposed, active |
+| Module | 4 | enabled, unavailable |
+| Integration | 3 | healthy, degraded, disabled |
 
-- [ ] Session validation uses the approved current server mechanism.
-- [ ] Active membership and capability checks precede registry queries.
-- [ ] Every query contains explicit authorized workspace and classification scope.
-- [ ] List and detail contracts are versioned and bounded.
-- [ ] Pagination is stable and filters are allowlisted.
-- [ ] Partial, stale, unavailable, and conflict states remain truthful.
-- [ ] Errors are non-enumerating and include safe correlation.
-- [ ] Logs and metrics contain no secret or protected content.
+Each record includes canonical ID, display name, concise description, owner role, lifecycle status, risk class, classification, source path, source commit SHA, content hash, observed time, synchronization state, and version. Relationships include agent-to-tool, workflow-to-agent, application-to-module, and integration-to-tool examples.
 
-## Frontend Execution
+## State Fixtures
 
-- [ ] Protected route, shell context, filters, list, and details are implemented.
-- [ ] Loading, empty, ready, partial, stale, denied, unavailable, conflict, and error states render.
-- [ ] Workspace switching cancels requests and clears prior scoped data.
-- [ ] No hidden control suggests registry mutation.
-- [ ] Keyboard, focus, landmarks, names, announcements, zoom, and responsive reflow pass.
-- [ ] Authenticated responses and client caches follow privacy controls.
+Provide named fixtures for:
 
-## Verification and Evidence
+- ready and complete;
+- verified empty;
+- partial source coverage;
+- stale observation;
+- source unavailable;
+- provenance conflict;
+- quarantined record;
+- duplicate canonical ID rejected by constraints;
+- long labels and descriptions;
+- first and final pagination boundaries.
 
-- [ ] All suites in COS-MVP-001-TEST-v1 pass.
-- [ ] Displayed records and counts reconcile with authorized seed expectations.
-- [ ] Provenance reconciles to source path, commit, and content hash.
-- [ ] Performance and resilience thresholds pass.
-- [ ] No unresolved critical or high defect remains.
-- [ ] Evidence identifies commit, migration, schema types, seed, contract, artifact, and environment.
-- [ ] Synthetic screenshots and demo evidence are reviewed for leakage.
+Unknown or failed sources are represented explicitly and never encoded as empty success.
 
-## Preview and Release
+## Load Order
 
-- [ ] Immutable candidate artifact is built from the recorded commit.
-- [ ] Preview configuration and database target are independently verified.
-- [ ] Smoke, denial, stale, partial, conflict, accessibility, and recovery paths pass.
-- [ ] Rollback or disablement procedure is rehearsed.
-- [ ] Known limitations and residual risks are documented.
-- [ ] Product, application, data, security, quality, and release owners record decisions.
-- [ ] Release record is updated from Not Released only after all blocking evidence is attached.
+1. Verify the local or isolated preview environment guard.
+2. Create Auth identities using the approved local mechanism.
+3. Insert workspaces, roles, and memberships.
+4. Insert registry types and controlled statuses if modeled.
+5. Insert records in canonical-ID order.
+6. Insert relationships after both endpoints exist.
+7. Insert source observations, sync outcomes, and health fixtures.
+8. calculate or load approved content hashes deterministically.
+9. run constraint, count, and provenance assertions.
+10. record seed version and evidence digest.
 
-## Stop Conditions
+## Security Controls
 
-Stop immediately for a secret exposure, unexpected production target, cross-workspace disclosure, bypassed RLS, false healthy or empty state, provenance conflict, untraceable artifact, failed blocking test, or uncontrolled side effect. Preserve safe evidence and use the incident process. Do not weaken security or edit results to continue.
+No production identifiers, emails, credentials, tokens, private documents, or copied customer data are allowed. Anonymous access returns nothing. The browser may read only rows permitted by active membership and classification policy. Service-level seed privileges are confined to the seed process and are never shipped to the application.
+
+## Validation
+
+Validation proves stable record counts by type and workspace; unique canonical identifiers; valid relationships; fixed pagination order; lifecycle and risk constraints; content-hash format; explicit freshness; authorized visibility; cross-workspace isolation; expired and suspended denial; and cleanup safety. The expected-result manifest is versioned with the seed.
+
+## Reset and Cleanup
+
+The supported local reset rebuilds schema and seeds from repository configuration. Preview cleanup removes only seed-version-tagged synthetic rows after validating the target. Production cleanup is prohibited. Shared migration history is not edited to change seed behavior.
 
 ## Acceptance Criteria
 
-- Every required item is complete or has an approved, non-blocking exception.
-- Blocking security, provenance, accessibility, data, and quality gates pass.
-- The candidate is reproducible from the exact repository state.
-- The release decision and approvers are explicit and evidence-backed.
-- Cleanup, rollback, limitations, and follow-up work are assigned.
+- A clean reset produces the same authorized records, relationships, order, and expected digest.
+- Every supported registry type and UI state has a representative fixture.
+- Positive and negative membership cases are reproducible.
+- Provenance values reconcile with the approved canonical-source manifest.
+- RLS and service tests prove cross-workspace isolation and denied direct writes.
+- No production, personal, or secret data is present.
+- Reset and cleanup steps are bounded and independently reviewable.
 
 ## References
 
-- [Build Implementation](COS-MVP-001_System_Registry_Viewer_Build_Implementation.md)
-- [Data Seed Plan](COS-MVP-001_System_Registry_Viewer_Data_Seed_Plan.md)
-- [Testing Plan](COS-MVP-001_System_Registry_Viewer_Testing_Plan.md)
-- [First Release Record](COS-MVP-001_System_Registry_Viewer_First_Release_Record.md)
-- [MVP First Demo Runbook](MVP_First_Demo_Runbook.md)
+- [System Registry Viewer Build Implementation](COS-MVP-001_System_Registry_Viewer_Build_Implementation.md)
+- [MVP First Supabase Migration](MVP_First_Supabase_Migration.md)
+- [Supabase Seed Data Definitions](../05_Database/Supabase_Seed_Data_Definitions.md)
+- [MVP System Registry Implementation](MVP_System_Registry_Implementation.md)
 
 ## Change History
 
 | Version | Change |
 | --- | --- |
-| 1.0 | Initial COS-MVP-001 execution checklist |
+| 1.0 | Initial deterministic seed plan for COS-MVP-001 |
