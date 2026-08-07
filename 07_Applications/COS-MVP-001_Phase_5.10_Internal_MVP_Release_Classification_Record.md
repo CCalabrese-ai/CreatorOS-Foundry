@@ -5,9 +5,9 @@
 **Document owner:** Product Owner and Release Owner
 **Classification timestamp:** `2026-08-07T13:12:50Z`
 **Release classification:** Internal MVP
-**Status:** Classification Approved — Publication Pending
+**Status:** Internal MVP Released
 **Application ID:** COS-MVP-001
-**Release status:** Not Released
+**Release status:** Internal MVP Released
 
 ## Purpose
 
@@ -78,6 +78,10 @@ Before COS-MVP-001 can be reclassified for production:
 ## Classification Decision
 
 COS-MVP-001 is approved as an **Internal MVP Release Candidate**. Its functional, security, quality, build, artifact, and ownership criteria pass. Authoritative GitHub publication remains the sole blocker to an Internal MVP Released state. Production readiness remains separately blocked by the deferred operational requirements.
+
+## Phase 5.12 Release Update
+
+Authoritative publication was restored and verified in Phase 5.11. Final Internal MVP verification found no remaining blocker. COS-MVP-001 is now **Internal MVP Released** for the bounded single-owner scope. All deferred production requirements remain open and mandatory for any future production release.
 
 ## References
 

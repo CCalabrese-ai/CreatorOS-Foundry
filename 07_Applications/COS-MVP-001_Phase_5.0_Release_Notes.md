@@ -4,7 +4,7 @@
 **Release type:** Internal MVP Release Candidate
 **Intended audience:** Caitlin Calabrese — single-owner internal use
 **Application:** System Registry Viewer
-**Status:** Candidate — Not Released
+**Status:** Internal MVP Released
 
 ## Feature Summary
 
@@ -63,4 +63,4 @@ The Internal MVP requires validated functionality, security, automated tests, bu
 
 ## Release Decision
 
-**Not Released.** These notes describe the validated Internal MVP Release Candidate. Authoritative GitHub publication remains incomplete, so no internal tag or release announcement is authorized. These notes do not constitute a production release.
+**Internal MVP Released.** The validated feature is released for the classified single-owner internal scope under `cos-mvp-001-v1.0.0-internal`. These notes do not constitute a production release. Deferred production recovery, alerting, monitoring, and infrastructure requirements remain mandatory.

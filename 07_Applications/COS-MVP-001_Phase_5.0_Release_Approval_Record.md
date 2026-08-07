@@ -3,10 +3,10 @@
 **Phase:** 5.0 — Release Approval and Launch
 **Release candidate:** COS-MVP-001 v1.0.0
 **Document owner:** Release Owner
-**Status:** Internal MVP Approved — Publication Blocked
+**Status:** Internal MVP Released
 **Risk class:** High
 **Application ID:** COS-MVP-001
-**Release status:** Not Released
+**Release status:** Internal MVP Released
 
 > **Phase 5.1 decision:** Technical gates were reconfirmed, but no attributable owner approval was available. The final decision is `No-Go — Not Released`; see `COS-MVP-001_Phase_5.1_Final_Release_Decision_Record.md`.
 
@@ -50,13 +50,15 @@ Each approver must record their name or authorized identity, decision, UTC date/
 
 ## Current Decision
 
-**Not Released.** Technical evidence and all six accountable-owner decisions are complete. Mandatory launch-time operational assignments and confirmations remain incomplete, so the release cannot transition to `Released` and no tag may be created.
+**Internal MVP Released.** Technical evidence, all six accountable-owner decisions, Internal MVP classification, and authoritative publication are complete. Production operational requirements remain incomplete, so this approval does not authorize production release or a production tag.
 
 ## Phase 5.10 Internal MVP Approval Boundary
 
 The six approvals, validated functionality, security evidence, 10 of 10 tests, successful build, and artifact integrity satisfy the Internal MVP criteria for single-owner use. Production backup/PITR validation, recovery evidence, alert-delivery receipt verification, full production monitoring, and expanded infrastructure controls remain mandatory for a future production release and are not waived.
 
-The Internal MVP remains **Not Released** solely because the authoritative GitHub repository does not yet contain the complete release history. The internal tag `cos-mvp-001-v1.0.0-internal` is not authorized until the final Phase 5.10 commit is verified on remote `main`.
+At the Phase 5.10 checkpoint, the Internal MVP remained **Not Released** solely because the authoritative GitHub repository did not yet contain the complete release history. Phase 5.11 subsequently resolved and verified that publication condition.
+
+> **Phase 5.12 finalization:** Phase 5.11 verified authoritative publication through `f5ad62c`. Final Internal MVP validation found no unresolved internal blocker. The Internal MVP release is authorized and recorded; deferred production requirements remain mandatory.
 
 ## Phase 5.1 Verification
 
