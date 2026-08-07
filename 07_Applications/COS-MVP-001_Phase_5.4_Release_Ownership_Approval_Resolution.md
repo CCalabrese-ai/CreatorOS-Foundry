@@ -76,6 +76,10 @@ The planned tag is `cos-mvp-001-v1.0.0`. It remains uncreated and must not be cr
 
 **Not Released.** Ownership approvals remain incomplete at 0 of 6. No approval was inferred or self-issued. The release tag and official released-state record remain withheld.
 
+## Phase 5.5 Authority Assignment Update
+
+Six canonical authority IDs and their exclusive responsibilities are now defined. Authorized human identities have not been provided or formally appointed, so approvals remain 0 of 6 and this record's **Not Released** decision is unchanged. GitHub publication access is documented separately and does not affect release approval.
+
 ## References
 
 - `07_Applications/COS-MVP-001_Phase_5.0_Release_Approval_Record.md`
@@ -83,3 +87,6 @@ The planned tag is `cos-mvp-001-v1.0.0`. It remains uncreated and must not be cr
 - `07_Applications/COS-MVP-001_Phase_5.1_Owner_Approval_Workflow.md`
 - `07_Applications/COS-MVP-001_Phase_5.1_Final_Release_Decision_Record.md`
 - `07_Applications/COS-MVP-001_Phase_5.3_Final_Release_Approval_Gate.md`
+- `07_Applications/COS-MVP-001_Phase_5.5_Release_Authority_Model.md`
+- `07_Applications/COS-MVP-001_Phase_5.5_Final_Approval_Workflow.md`
+- `07_Applications/COS-MVP-001_Phase_5.5_GitHub_Publication_Blocker.md`
