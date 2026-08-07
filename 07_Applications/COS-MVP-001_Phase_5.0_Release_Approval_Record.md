@@ -66,6 +66,8 @@ The current candidate fails before test execution because `src/services/observab
 
 > **Phase 5.2 resolution:** The observability implementation is restored, 10/10 tests and the production build pass, and all regenerated artifact checksums verify. Technical readiness is current again; approvals remain 0 of 6 and release status remains **Not Released**.
 
+> **Phase 5.3 final gate:** Technical readiness and security continuity were reconfirmed. The six-role matrix remains 0 of 6 approved, so the final decision remains **No-Go — Not Released**. No tag or official released-state record was created.
+
 ## References
 
 - `07_Applications/COS-MVP-001_Phase_5.0_Release_Notes.md`
@@ -75,3 +77,4 @@ The current candidate fails before test execution because `src/services/observab
 - `07_Applications/COS-MVP-001_Phase_5.1_Owner_Approval_Workflow.md`
 - `07_Applications/COS-MVP-001_Phase_5.1_Release_Gate_Verification.md`
 - `07_Applications/COS-MVP-001_Phase_5.1_Final_Release_Decision_Record.md`
+- `07_Applications/COS-MVP-001_Phase_5.3_Final_Release_Approval_Gate.md`
