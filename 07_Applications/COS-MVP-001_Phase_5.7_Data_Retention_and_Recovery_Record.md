@@ -64,6 +64,10 @@ The additive System Registry migration normally uses application restoration plu
 
 Retention policy and recovery ownership are defined. Production backup or point-in-time recovery capability must be reconfirmed and recorded at launch time. Until that evidence exists, release status remains **Not Released**.
 
+## Phase 5.9 Live Recovery Verification
+
+At `2026-08-07T13:05:03Z`, the Supabase project dashboard reported `Last backup: No backups`. The Scheduled Backups page stated that the Free Plan does not include project backups and requires a Pro upgrade for up to seven days of scheduled backups. No PITR window or restore validation was available. Recovery capability remains unverified pending an explicit paid-plan decision or an approved independent logical-backup and restore process.
+
 ## References
 
 - [Database Operational Runbook](../05_Database/Supabase_Database_Operational_Runbook.md)
