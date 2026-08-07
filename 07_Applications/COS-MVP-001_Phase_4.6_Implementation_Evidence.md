@@ -35,7 +35,7 @@ This record ties the COS-MVP-001 implementation to its database, application, te
 | Access validation | `anon` SELECT false; `authenticated` SELECT true; authenticated writes false |
 | Security advisors | No finding on `system_registry_records`; pre-existing foundation findings remain documented |
 | Performance advisors | New indexes reported unused before workload, an expected informational result |
-| Authenticated browser demo | Pending approved test identity |
+| Authenticated browser demo | Passed with the approved Phase 4.7 identity; see the Phase 4.7 release validation record |
 
 ## Validation Results
 
@@ -45,7 +45,7 @@ The new table has one authenticated SELECT policy, no anonymous SELECT grant, an
 
 ## Validation Limitation
 
-The application supports passwordless Supabase authentication and queries the live `system_registry_records` table after a session is established. No approved synthetic email identity or mailbox was available in this execution context, so the signed-in browser success path and complete Phase 4.5 demo script have not been claimed as passed.
+The authenticated happy path is complete. The remaining Phase 4.5 unauthorized, cross-workspace, direct-write, stale, partial, unavailable, conflict, accessibility, rollback, and owner-approval gates have not been claimed as passed.
 
 ## Release Decision
 
