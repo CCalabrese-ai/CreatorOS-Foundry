@@ -1,12 +1,12 @@
 # COS-MVP-001 Phase 5.1 Final Release Decision Record
 
-**Phase:** 5.1 — Release Approval Completion  
-**Version:** 1.0  
-**Document owner:** Release Owner  
-**Status:** No-Go Recorded — Approval Incomplete  
-**Decision ID:** COS-MVP-001-RD-001  
-**Risk class:** High  
-**Application ID:** COS-MVP-001  
+**Phase:** 5.1 — Release Approval Completion
+**Version:** 1.0
+**Document owner:** Release Owner
+**Status:** No-Go Recorded — Approval Incomplete
+**Decision ID:** COS-MVP-001-RD-001
+**Risk class:** High
+**Application ID:** COS-MVP-001
 **Release status:** Not Released
 
 ## Decision
@@ -71,6 +71,12 @@ The final technical gate passed with 10/10 tests, a successful production build,
 ## Phase 5.6 Approval Update
 
 Caitlin Calabrese is explicitly appointed to all six authorities, and six acceptance statements are recorded at `2026-08-07T12:18:47Z`. Owner approval is complete at 6 of 6. The decision remains **Conditional No-Go — Not Released** because mandatory deployment, rollback, monitoring, retention, and post-launch observation fields remain incomplete. No tag or released-state record is authorized yet.
+
+## Phase 5.10 Internal MVP Decision
+
+COS-MVP-001 is reclassified as an **Internal MVP Release Candidate** for single-owner internal use. Functional, security, quality, build, artifact, and ownership requirements pass. Production backup/PITR validation, production recovery evidence, alert-delivery receipt verification, full production monitoring, and expanded infrastructure controls are preserved as mandatory future-production requirements rather than Internal MVP gates.
+
+The Internal MVP decision is **No-Go — Not Released** because authoritative GitHub `main` remains at `e017b0c3475576a7a6d6326187b295c105c60990` and does not contain the complete release history. Do not create `cos-mvp-001-v1.0.0-internal` until the final Phase 5.10 commit and all ancestors are verified remotely. The production release remains separately blocked and no production release record is authorized.
 
 ## References
 

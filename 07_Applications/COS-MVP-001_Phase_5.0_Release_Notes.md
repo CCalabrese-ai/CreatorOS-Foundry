@@ -1,8 +1,9 @@
 # COS-MVP-001 v1.0.0 Release Notes
 
-**Release candidate:** COS-MVP-001 v1.0.0  
-**Release type:** First Creator OS Foundry MVP  
-**Application:** System Registry Viewer  
+**Release candidate:** COS-MVP-001 v1.0.0
+**Release type:** Internal MVP Release Candidate
+**Intended audience:** Caitlin Calabrese — single-owner internal use
+**Application:** System Registry Viewer
 **Status:** Candidate — Not Released
 
 ## Feature Summary
@@ -53,7 +54,13 @@ COS-MVP-001 provides an authenticated, read-only view of the Creator OS System R
 - The initial dataset contains 12 governed records and is not a complete enterprise catalog.
 - Foundation tables outside COS-MVP-001 remain intentionally closed and are not exposed by this release.
 - Leaked-password protection is a project advisory; this MVP accepts passwordless authentication only.
+- Internal MVP use provides no production availability, backup, recovery, support, or alert-delivery guarantee.
+- Public, external, multi-owner, and production use remain outside this release classification.
+
+## Internal MVP and Future Production Boundary
+
+The Internal MVP requires validated functionality, security, automated tests, build, artifact integrity, and approved ownership. Those requirements pass. Production backup/PITR validation, production recovery evidence, alert-delivery destination and receipt verification, full production monitoring validation, and expanded infrastructure controls are deferred only from the Internal MVP and remain mandatory for a future production release.
 
 ## Release Decision
 
-**Not Released.** These notes describe the validated release candidate. They do not constitute owner approval, deployment authorization, or a release announcement.
+**Not Released.** These notes describe the validated Internal MVP Release Candidate. Authoritative GitHub publication remains incomplete, so no internal tag or release announcement is authorized. These notes do not constitute a production release.
