@@ -1,0 +1,32 @@
+.capability-nav { display: flex; gap: .35rem; padding: .25rem; border: 1px solid #29483f; }
+.capability-nav button { border: 0; background: transparent; color: #91a69f; padding: .55rem .8rem; cursor: pointer; }
+.capability-nav button[aria-current="page"] { background: #1a3930; color: #72e0b8; }
+.capability-nav button:focus-visible { outline: 3px solid #f5ca72; outline-offset: 2px; }
+.actions, .form-actions, .form-heading { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
+.create-form { padding: 1.5rem; border-bottom: 1px solid #29483f; background: #11261f; }
+.create-form h3, .evidence h3 { font-family: Georgia, serif; font-weight: 400; margin: .3rem 0; font-size: 1.35rem; }
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin: 1.25rem 0; }
+.form-grid .wide { grid-column: 1 / -1; }
+.form-grid textarea { min-height: 5rem; resize: vertical; background: #091713; border: 1px solid #3b5d54; color: #fff; padding: .72rem; font: inherit; }
+.close-inline { border: 0; background: transparent; color: #fff; font-size: 1.75rem; cursor: pointer; }
+.state.loading { color: #9edbc5; }
+.state.partial, .state.conflict { color: #f5ca72; }
+.pill.published, .pill.active { border-color: #72e0b8; color: #72e0b8; }
+.pill.draft, .pill.proposed, .pill.in_review { border-color: #f5ca72; color: #f5ca72; }
+.pill.quarantined, .pill.rejected { border-color: #ff9d8d; color: #ffb4a8; }
+.evidence { margin-top: 1.5rem; }
+.evidence ol, .evidence ul { padding-left: 1.25rem; }
+.evidence li { margin: .65rem 0; line-height: 1.4; }
+.evidence li small { display: block; color: #8da199; }
+.detail .evidence p { color: #afc0ba; }
+.retry { margin: 0 1.5rem 1rem; }
+
+@media (max-width: 760px) {
+  .topbar { flex-wrap: wrap; gap: 1rem; }
+  .capability-nav { order: 3; width: 100%; }
+  .capability-nav button { flex: 1; }
+  .form-grid { grid-template-columns: 1fr; }
+  .form-grid .wide { grid-column: auto; }
+  .actions { align-items: stretch; flex-direction: column; }
+  .actions .button { width: 100%; }
+}

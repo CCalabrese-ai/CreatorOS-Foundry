@@ -3,7 +3,13 @@ const ALLOWED_EVENTS = new Set([
   'registry.load.started',
   'registry.load.succeeded',
   'registry.load.degraded',
-  'registry.load.failed'
+  'registry.load.failed',
+  'documents.load.succeeded',
+  'documents.load.failed',
+  'documents.detail.succeeded',
+  'documents.detail.failed',
+  'documents.create.succeeded',
+  'documents.create.failed'
 ]);
 
 function sanitize(detail = {}) {
