@@ -8,6 +8,8 @@
 **Application ID:** COS-MVP-001  
 **Release status:** Not Released
 
+> **Phase 5.1 decision:** Technical gates were reconfirmed, but no attributable owner approval was available. The final decision is `No-Go — Not Released`; see `COS-MVP-001_Phase_5.1_Final_Release_Decision_Record.md`.
+
 ## Approval Rule
 
 Approval is a named, attributable governance action. It cannot be self-issued by the implementation agent, inferred from technical test results, inherited from an earlier phase request, or recorded on behalf of an owner. Blank, verbal-only, collective, or assumed approvals are invalid.
@@ -50,9 +52,24 @@ Each approver must record their name or authorized identity, decision, UTC date/
 
 **Not Released.** Technical evidence is complete, but all six accountable-owner decisions remain unrecorded. This status may change only through an updated, fully attributable sign-off matrix and an explicit Release Owner go decision.
 
+## Phase 5.1 Verification
+
+| Measure | Result |
+| --- | --- |
+| Technical gates passing | 0 currently releasable; 3 historical passes require revalidation; 3 blocked or failed |
+| Required approvals recorded | 0 of 6 |
+| Release Owner go decision | Withheld |
+| Version tag created | No |
+| Official released-state record created | No |
+
+The current candidate fails before test execution because `src/services/observability.js` contains release-manifest JSON. Its 2,837-byte content and SHA-256 digest do not match the 899-byte immutable-manifest entry. See the Phase 5.1 gate verification for reproduction evidence.
+
 ## References
 
 - `07_Applications/COS-MVP-001_Phase_5.0_Release_Notes.md`
 - `07_Applications/COS-MVP-001_Phase_5.0_Release_Package_Manifest.md`
 - `07_Applications/COS-MVP-001_Phase_5.0_Launch_Checklist.md`
 - `07_Applications/COS-MVP-001_Phase_4.9_Final_Owner_Approval.md`
+- `07_Applications/COS-MVP-001_Phase_5.1_Owner_Approval_Workflow.md`
+- `07_Applications/COS-MVP-001_Phase_5.1_Release_Gate_Verification.md`
+- `07_Applications/COS-MVP-001_Phase_5.1_Final_Release_Decision_Record.md`
