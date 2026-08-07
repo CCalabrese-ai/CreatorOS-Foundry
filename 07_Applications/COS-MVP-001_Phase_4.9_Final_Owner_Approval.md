@@ -8,6 +8,8 @@
 **Application ID:** COS-MVP-001  
 **Release status:** Not Released
 
+> **Phase 5.0 governance update:** The launch sign-off matrix, release notes, package manifest, checklist, and version tagging plan are prepared in the Phase 5.0 release package. No accountable-owner approval has been added; the release remains **Not Released**.
+
 ## Approval Boundary
 
 Automated validation and an implementation agent may establish evidence but may not impersonate accountable organizational owners. Approval requires a named human or formally delegated authority to accept the evidence, residual risk, monitoring ownership, and release timing.
