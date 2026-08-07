@@ -80,6 +80,10 @@ The planned tag is `cos-mvp-001-v1.0.0`. It remains uncreated and must not be cr
 
 Six canonical authority IDs and their exclusive responsibilities are now defined. Authorized human identities have not been provided or formally appointed, so approvals remain 0 of 6 and this record's **Not Released** decision is unchanged. GitHub publication access is documented separately and does not affect release approval.
 
+## Phase 5.6 Owner Assignment Update
+
+Caitlin Calabrese is now explicitly appointed to all six authority IDs, and six acceptance statements are recorded at `2026-08-07T12:18:47Z`. Approval count is 6 of 6. Release status remains **Not Released** because the operational launch assignments and confirmations listed in the launch checklist remain incomplete.
+
 ## References
 
 - `07_Applications/COS-MVP-001_Phase_5.0_Release_Approval_Record.md`
@@ -90,3 +94,4 @@ Six canonical authority IDs and their exclusive responsibilities are now defined
 - `07_Applications/COS-MVP-001_Phase_5.5_Release_Authority_Model.md`
 - `07_Applications/COS-MVP-001_Phase_5.5_Final_Approval_Workflow.md`
 - `07_Applications/COS-MVP-001_Phase_5.5_GitHub_Publication_Blocker.md`
+- `07_Applications/COS-MVP-001_Phase_5.6_Owner_Assignment_and_Approval_Record.md`

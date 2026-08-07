@@ -9,6 +9,8 @@
 **Release candidate:** 1.0.0  
 **Release status:** Not Released
 
+> **Phase 5.6 approval update (2026-08-07):** Caitlin Calabrese is explicitly appointed to Product, Application, Data, Security, Quality, and Release authority under a single-owner governance model. Six acceptance statements are recorded at `2026-08-07T12:18:47Z`. Technical and approval gates pass, but operational launch assignments remain incomplete; release status remains **Not Released** and no version tag has been created.
+
 > **Phase 4.9 update (2026-08-07):** All implemented technical readiness gates now pass. Workspace authorization, degraded-state handling, observability, accessibility focus remediation, runtime enforcement, and immutable candidate artifacts are evidenced. Release remains **Not Released** until named Product, Application, Data, Security, Quality, and Release Owner decisions are recorded.
 
 > **Phase 4.8 readiness update (2026-08-07):** Denial, resilience, accessibility, and application rollback validation has been executed and recorded. The application remains **Not Released** because workspace-aware authorization, complete degraded states, accessibility follow-up, production recovery and artifact evidence, observability, and accountable-owner approvals are still required. See `COS-MVP-001_Phase_4.8_Release_Readiness_Validation.md`.
@@ -79,12 +81,12 @@ The functional slice is implemented and the authenticated happy path is validate
 
 | Role | Decision | Evidence reference | Date |
 | --- | --- | --- | --- |
-| Product Owner | Pending | Pending | Pending |
-| Application Owner | Pending | Pending | Pending |
-| Data Owner | Pending | Pending | Pending |
-| Security Owner | Pending | Pending | Pending |
-| Quality Owner | Pending | Pending | Pending |
-| Release Owner | Pending | Pending | Pending |
+| Product Owner | Approved — Caitlin Calabrese | Phase 5.6 owner acceptance | `2026-08-07T12:18:47Z` |
+| Application Owner | Approved — Caitlin Calabrese | Phase 5.6 owner acceptance | `2026-08-07T12:18:47Z` |
+| Data Owner | Approved — Caitlin Calabrese | Phase 5.6 owner acceptance | `2026-08-07T12:18:47Z` |
+| Security Owner | Approved — Caitlin Calabrese | Phase 5.6 owner acceptance | `2026-08-07T12:18:47Z` |
+| Quality Owner | Approved — Caitlin Calabrese | Phase 5.6 owner acceptance | `2026-08-07T12:18:47Z` |
+| Release Owner | Approved — transition toward release authorized — Caitlin Calabrese | Phase 5.6 final acceptance | `2026-08-07T12:18:47Z` |
 
 ## Post-Release Record
 
@@ -107,6 +109,7 @@ If a release is approved, add actual release date, exact commit and artifact dig
 - [Execution Checklist](COS-MVP-001_System_Registry_Viewer_Execution_Checklist.md)
 - [Phase 4.7 Release Validation](COS-MVP-001_Phase_4.7_Release_Validation.md)
 - [Release Management](../09_Tests/Release_Management.md)
+- [Phase 5.6 Owner Assignment and Approval Record](COS-MVP-001_Phase_5.6_Owner_Assignment_and_Approval_Record.md)
 
 ## Change History
 

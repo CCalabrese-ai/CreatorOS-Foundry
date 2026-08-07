@@ -33,12 +33,12 @@ Each approver must record their name or authorized identity, decision, UTC date/
 
 | Owner role | Required review | Approver | Decision | UTC date/time | Conditions or accepted residual risk |
 | --- | --- | --- | --- | --- | --- |
-| Product Owner | Scope, user value, known limitations, launch audience |  | Pending |  |  |
-| Application Owner | Build, degraded states, runtime, deployment |  | Pending |  |  |
-| Data Owner | Migrations, data integrity, recovery, retention |  | Pending |  |  |
-| Security Owner | RLS, membership denial matrix, secrets, advisories |  | Pending |  |  |
-| Quality Owner | Tests, accessibility, acceptance evidence |  | Pending |  |  |
-| Release Owner | Complete package, rollback, monitoring, launch timing |  | Withheld |  | All preceding approvals required |
+| Product Owner | Scope, user value, known limitations, launch audience | Caitlin Calabrese | Approved | `2026-08-07T12:18:47Z` | Single-owner governance model |
+| Application Owner | Build, degraded states, runtime, deployment | Caitlin Calabrese | Approved | `2026-08-07T12:18:47Z` | Single-owner governance model |
+| Data Owner | Migrations, data integrity, recovery, retention | Caitlin Calabrese | Approved | `2026-08-07T12:18:47Z` | Single-owner governance model |
+| Security Owner | RLS, membership denial matrix, secrets, advisories | Caitlin Calabrese | Approved | `2026-08-07T12:18:47Z` | Single-owner governance model |
+| Quality Owner | Tests, accessibility, acceptance evidence | Caitlin Calabrese | Approved | `2026-08-07T12:18:47Z` | Single-owner governance model |
+| Release Owner | Complete package, rollback, monitoring, launch timing | Caitlin Calabrese | Approved — transition toward release authorized | `2026-08-07T12:18:47Z` | Operational launch fields remain required |
 
 ## Approval Evidence Requirements
 
@@ -50,15 +50,15 @@ Each approver must record their name or authorized identity, decision, UTC date/
 
 ## Current Decision
 
-**Not Released.** Technical evidence is complete, but all six accountable-owner decisions remain unrecorded. This status may change only through an updated, fully attributable sign-off matrix and an explicit Release Owner go decision.
+**Not Released.** Technical evidence and all six accountable-owner decisions are complete. Mandatory launch-time operational assignments and confirmations remain incomplete, so the release cannot transition to `Released` and no tag may be created.
 
 ## Phase 5.1 Verification
 
 | Measure | Result |
 | --- | --- |
 | Technical gates passing | 6 of 6 after Phase 5.2 repair and revalidation |
-| Required approvals recorded | 0 of 6 |
-| Release Owner go decision | Withheld |
+| Required approvals recorded | 6 of 6 |
+| Release Owner decision | Approved — transition toward release authorized; operational launch gates pending |
 | Version tag created | No |
 | Official released-state record created | No |
 
@@ -67,6 +67,8 @@ The current candidate fails before test execution because `src/services/observab
 > **Phase 5.2 resolution:** The observability implementation is restored, 10/10 tests and the production build pass, and all regenerated artifact checksums verify. Technical readiness is current again; approvals remain 0 of 6 and release status remains **Not Released**.
 
 > **Phase 5.3 final gate:** Technical readiness and security continuity were reconfirmed. The six-role matrix remains 0 of 6 approved, so the final decision remains **No-Go — Not Released**. No tag or official released-state record was created.
+
+> **Phase 5.6 approval update:** Caitlin Calabrese is explicitly appointed to all six authorities under the documented single-owner governance model. Six approvals are recorded at `2026-08-07T12:18:47Z`. Operational launch fields remain incomplete, so release status remains **Not Released** and no tag has been created.
 
 ## References
 
@@ -78,3 +80,4 @@ The current candidate fails before test execution because `src/services/observab
 - `07_Applications/COS-MVP-001_Phase_5.1_Release_Gate_Verification.md`
 - `07_Applications/COS-MVP-001_Phase_5.1_Final_Release_Decision_Record.md`
 - `07_Applications/COS-MVP-001_Phase_5.3_Final_Release_Approval_Gate.md`
+- `07_Applications/COS-MVP-001_Phase_5.6_Owner_Assignment_and_Approval_Record.md`
