@@ -57,6 +57,10 @@ After publication, verify remote `main` contains the complete ordered history an
 
 Resolving this publication blocker does not change approval count, release status, or tag authorization. COS-MVP-001 remains **Not Released** until the separate final approval workflow reaches 6 of 6 approvals and the Release Owner explicitly records `Go`.
 
+## Phase 5.8 Publication Verification
+
+At `2026-08-07T12:39:46Z`, a direct remote query succeeded and returned authoritative `main` at `e017b0c3475576a7a6d6326187b295c105c60990`. The local pre-verification candidate was `f166d7a`, eight commits ahead of that remote baseline. No remote `phase-5-release` head was returned. Owner approval is now 6 of 6, but publication remains blocked and the remote does not contain the complete release history. The tag target is therefore not ready, and `cos-mvp-001-v1.0.0` must remain uncreated.
+
 ## References
 
 - `07_Applications/COS-MVP-001_Phase_5.5_Final_Approval_Workflow.md`
