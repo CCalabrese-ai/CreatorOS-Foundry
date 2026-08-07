@@ -115,7 +115,7 @@ Activation requires passing representative normal, adversarial, stale-source, co
 - [Document Workflows](Document_Workflows.md)
 - [GitHub-Supabase Synchronization](GitHub_Supabase_Synchronization.md)
 - [AI Security Guidelines](../08_Security/AI_Security_Guidelines.md)
-- [Agent Handoffs](../06_Automations/Agent_Handoffs.md)
+- [Agent Handoffs](../06_Automations/Agent_Handoff_Standards.md)
 
 ## Change History
 
