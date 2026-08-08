@@ -1,16 +1,18 @@
 # COS-MVP-002 Phase 6.6 Authentication Dependency Blocker
 
 **Phase:** 6.6 — Remediation (Human Accessibility Validation)
-**Version:** 1.0
+**Version:** 2.0
 **Document owner:** Quality Owner and Data Owner
-**Status:** Blocker — Validation Dependency Unavailable
+**Status:** Internal Auth Configuration Validated — Email Delivery Capacity Pending
 **Risk class:** Moderate
 **Capability ID:** COS-MVP-002
 **Release status:** Not Released (unchanged)
 
 ## Purpose
 
-This note records a blocker discovered while beginning execution of the Phase 6.6 Human Accessibility Test Checklist: the app's passwordless sign-in cannot currently send email to any address, which blocks every checklist item that requires an authenticated session. This is a blocker record, not a fix, a validation result, or a release decision.
+This note records a blocker discovered while beginning execution of the Phase 6.6 Human Accessibility Test Checklist: the app's passwordless sign-in cannot currently send email to any address, which blocks every checklist item that requires an authenticated session. This is a blocker record, not a validation result, and not a release decision. **No application code was changed in the original investigation or in this update.** The configuration correction described in the new section below was performed manually in the Supabase Dashboard by the operator — it is not a code change and nothing in this repository was modified to produce it.
+
+**Revision note (v2.0):** the original investigation (Section "Error" through "Required Resolution Path" below) is preserved unchanged as the historical record of the initial finding. A new section, "COS-MVP-002 Phase 6.6 Authentication Configuration Validation," documents a subsequent Site URL / redirect URL correction and re-verification. Per this document's ongoing evidentiary standard, that section distinguishes explicitly between what was independently re-tested and confirmed in this session versus what is reported as having been changed in the Supabase Dashboard, which was not directly viewed in this session (no dashboard or Management API access was available here, consistent with every prior phase).
 
 ## Error
 
@@ -58,12 +60,50 @@ Resolution is outside this environment's available access and is not attempted h
 2. Configure a custom SMTP provider for the project's Auth email sending (Supabase Dashboard → Authentication → Email settings), which carries a materially higher, provider-defined rate limit instead of the default built-in sender's cap.
 3. Confirm, once either of the above is in place, that a real sign-in attempt succeeds end-to-end (email received, link functional) before resuming the Human Accessibility Test Checklist's authenticated sections.
 
+## COS-MVP-002 Phase 6.6 Authentication Configuration Validation
+
+### 1. Supabase Auth configuration investigation — completed
+
+The findings in the original section above are reconfirmed, not superseded: the app uses the correct Supabase project (`ygcldesxjwotrjarvvoh`), the magic-link request reaches Supabase successfully, and the originally reproduced failure was `HTTP 429 over_email_send_rate_limit` — an outbound email-sending capacity limitation from Supabase's default email provider, not an application defect. The magic-link email template itself was confirmed by the operator to exist and be correctly configured in the Supabase Dashboard; this specific point (template content/configuration) was not independently viewed in this session, since it requires dashboard access this session does not have.
+
+### 2. Additional configuration issue discovered and corrected
+
+**Reported by the operator, corrected manually in the Supabase Dashboard — not a code change, and not directly viewed by this session:**
+
+- **Before:** Site URL was `http://localhost:3000`; no redirect URLs were configured.
+- **Mismatch:** the Creator OS dev server runs on `http://localhost:5173`, and the app calls `signInWithOtp` with `emailRedirectTo: window.location.origin` (`src/main.js`) — meaning the redirect target it actually sends is whatever origin the page is currently loaded from, `http://localhost:5173` in this environment. Against a Site URL of `:3000` with no additional redirect URLs allowlisted, this would be a genuine mismatch.
+- **Correction applied (per operator report):** Site URL changed to `http://localhost:5173`; redirect URL `http://localhost:5173/*` added.
+
+**Independently re-tested in this session, to corroborate rather than simply accept this report:** with a preview server running at `http://localhost:5173`, a direct call to the same `/auth/v1/otp` endpoint the app uses — same project URL, same publishable key, same payload shape, with `emailRedirectTo` set to the live `http://localhost:5173` origin — returned:
+
+```json
+HTTP 200
+{}
+```
+
+a clean success response, with the `:5173` redirect target accepted rather than rejected. The very next attempt (both a repeat direct call and a real submission through the app's own sign-in form) immediately returned `429 over_email_send_rate_limit` again. This pattern — one accepted send, then an immediate rate-limit block — is consistent with the redirect-URL correction being in effect (a still-misconfigured Site URL would be expected to reject the `:5173` redirect outright, not accept it and then separately rate-limit) and is independent evidence, not just a restated claim. It does not, by itself, constitute direct visual confirmation of the Dashboard's Site URL field — that was not viewed in this session.
+
+### 3. Classification update
+
+**Previous classification:** Authentication blocked.
+
+**Updated classification:** Internal authentication configuration validated. Remaining dependency: production email delivery provider configuration.
+
+**Internal MVP testing can proceed once email-sending capacity is available or the rate limit resets.** The configuration-level obstacle (Site URL / redirect URL mismatch) that would have blocked authentication even with sufficient email capacity is reported corrected and is independently corroborated, not merely asserted. The sole remaining obstacle to resuming the Human Accessibility Test Checklist's authenticated sections is Supabase's default email-sending rate capacity, exactly as classified in the original investigation above — this has not changed.
+
+**Production readiness is a separate, later concern, out of scope for Internal MVP testing, and requires, at minimum:**
+- a final product identity/domain decision
+- a verified sending domain
+- a production SMTP provider configuration (for example, Resend) — not attempted, configured, or recommended as complete in this document
+
 ## What This Document Does Not Do
 
-- It does not modify any application code, configuration, or environment file.
+- It does not modify any application code, configuration, or environment file — including in this update. The Site URL / redirect URL correction described above was performed manually in the Supabase Dashboard by the operator, outside this repository.
 - It does not change COS-MVP-002's release status, which remains **Not Released**.
-- It does not make or imply a release recommendation.
-- It does not resolve the blocker — it records it for whoever holds the access needed to act on it.
+- It does not make or imply a release recommendation, a Go decision, or release approval of any kind.
+- It does not create or reference any tag or release.
+- It does not make any production-readiness claim — production email delivery remains unconfigured and is explicitly out of scope here.
+- It does not resolve the remaining email-capacity dependency — it records what was validated and what still blocks full authenticated testing.
 
 ## References
 
@@ -75,3 +115,4 @@ Resolution is outside this environment's available access and is not attempted h
 | Version | Change |
 | --- | --- |
 | 1.0 | Initial blocker record: `over_email_send_rate_limit` (HTTP 429) reproduced directly against the live Supabase endpoint with two independent email addresses, classified as a project-side email-capacity limitation rather than an application defect, scoped impact on the accessibility checklist, and required resolution path documented |
+| 2.0 | Added "Authentication Configuration Validation" section: documented an operator-reported Site URL/redirect URL correction (`localhost:3000` → `localhost:5173`, redirect URL added), independently corroborated via a fresh direct API call that succeeded with the `:5173` redirect target before immediately hitting the rate limit again on the next attempt. Updated classification to distinguish "internal auth configuration validated" from the still-open "production email delivery provider configuration" dependency. No code, configuration, or environment file changed. |
