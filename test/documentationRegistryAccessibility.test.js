@@ -2,9 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
-const [html, main] = await Promise.all([
+const [html, main, styles] = await Promise.all([
   readFile(new URL('../index.html', import.meta.url), 'utf8'),
-  readFile(new URL('../src/main.js', import.meta.url), 'utf8')
+  readFile(new URL('../src/main.js', import.meta.url), 'utf8'),
+  readFile(new URL('../src/styles.css', import.meta.url), 'utf8')
 ]);
 
 test('provides a bypass link to the named main region', () => {
@@ -41,4 +42,8 @@ test('implements keyboard-compatible controls and explicit detail focus handling
   assert.match(main, /data-action="close-detail" aria-label="Close document details"/);
   assert.match(main, /state\.documents\.detailOriginId = id/);
   assert.match(main, /data-document-id=.*CSS\.escape\(documentOriginId\)/s);
+});
+
+test('wraps the registry panel heading instead of overflowing at narrow viewports (P64-001)', () => {
+  assert.match(styles, /\.panel-heading\{[^}]*flex-wrap:wrap/);
 });
