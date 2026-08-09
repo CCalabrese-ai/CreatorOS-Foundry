@@ -1,7 +1,7 @@
 # Creator OS Foundry — Current State Handoff
 
 **Document owner:** Architecture Owner
-**Version:** 1.0
+**Version:** 1.1
 **Status:** Navigation and Continuity Artifact — No Decision Made
 **Risk class:** Low (informational; makes no changes and grants no authority)
 **Release status:** Not applicable — this document is not a capability and has no release status of its own
@@ -136,6 +136,7 @@ These are stated as non-negotiable across every governing document reviewed (Sys
 - **Version everything.** Every governed entity must be able to answer "which version of this was active when." A registry without versioning is not a registry.
 - **Composable before bespoke.** A shared capability is designed once and reused across every module that needs it — the entire reason the Shared Approval/Evidence Primitive exists as a Phase 7 foundation rather than being left for each future registry to reinvent.
 - **Observable and reversible / recovery.** Material actions produce logs, status, ownership, and a recovery path — the explicit justification for sequencing Execution Safety Foundations before Phase 8's Agent Execution Layer.
+- **Additive evolution over destructive replacement.** New capability is built by adding new tables, functions, and policies alongside what already exists — never by altering, dropping, or replacing an already-shipped object as the default path. This is proven in practice by every Phase 7.1 planning document to date (the Migration Design Plan's entire migration sequence is additive-only; the Schema Design Review's Migration Strategy states no existing document-specific table, function, policy, or grant is touched) and holds regardless of which unresolved decision (e.g., the `approvals`-table reconciliation question) is eventually chosen — even a future "replace" outcome would proceed as its own explicit, separately-evidenced migration, not as a retrofit onto this one.
 
 ## 8. Governance Rules
 
@@ -153,7 +154,16 @@ These are stated as non-negotiable across every governing document reviewed (Sys
 - **Confusing Alpha/local deployments with Foundry architecture.** This repository is the governed specification and implementation source of truth. Any local experiment, prototype, or alpha deployment that diverges from what's actually committed here should not be mistaken for the system's real state — always verify against this repository's actual `src/`, `supabase/migrations/`, and live database, not against what a running instance appears to do.
 - **Self-authorizing a release.** No AI collaborator should ever change a release status, create a tag, or create a GitHub release without a separate, explicit, human-given instruction distinct from any planning or validation approval.
 
-## 10. Recommended Next Action for the Next AI Collaborator
+## 10. Foundry vs. Alpha/Camille Reign Deployment Boundary
+
+This section exists to close a gap identified in the most recent continuity audit: this repository contains no prior reference to any Alpha or Camille Reign deployment, so the boundary below is stated here explicitly rather than assumed.
+
+- **Creator OS Alpha and Camille Reign are separate deployment environments**, distinct from Creator OS Foundry. Foundry is the governed architecture, specification, and implementation source of truth described throughout this document; Alpha/Camille Reign deployments are downstream consumers or testing environments, not part of Foundry's own architecture.
+- **They are intentionally not represented inside this repository.** No Camille-specific configuration, data model, or deployment detail belongs in `07_Applications/`, `05_Database/`, `src/`, or any other Foundry path — their absence here is by design, not an omission to fill in.
+- **Foundry architecture must remain creator-agnostic.** Every governed pattern described in this handoff (workspace/membership model, governed-mutation pattern, RLS-tiered access, the Shared Approval/Evidence Primitive) is designed to serve any deployment built on Foundry, not to encode the specifics of any one deployment, including Camille Reign.
+- **Alpha implementations may inform Foundry requirements but do not redefine Foundry architecture automatically.** A need surfaced by an Alpha or Camille Reign deployment is an input to a future, explicit Foundry decision — the same as any other requirement source — never a change that propagates into this repository's architecture on its own.
+
+## 11. Recommended Next Action for the Next AI Collaborator
 
 **Do not start implementing Phase 7.1.** The correct next action is one of the following, in order of likelihood, and should be confirmed with the human owner before proceeding:
 
@@ -196,3 +206,4 @@ These are stated as non-negotiable across every governing document reviewed (Sys
 | Version | Change |
 | --- | --- |
 | 1.0 | Initial canonical continuation handoff: mission/vision, repository architecture overview, completed milestones (COS-MVP-001 released, COS-MVP-002 validated-pending-ratification, COS-MVP-003 Phase 7 planning progress), current build status across implemented/partial/designed-only capabilities, Phase 7.1 status (completed artifacts, ratified-pending decisions, unresolved decisions, gated next steps), Phase 7 roadmap sequencing and dependencies, eight non-negotiable architectural principles, four governance rules, six named risks/avoidable mistakes, and a conditional recommended next action requiring live verification before acting. No implementation performed, no decision made, no release status changed. |
+| 1.1 | Addressed continuity-audit findings only: added "Additive evolution over destructive replacement" as a ninth non-negotiable architectural principle (Section 7); added a new Foundry vs. Alpha/Camille Reign Deployment Boundary section (Section 10) clarifying that Alpha/Camille Reign are separate deployment environments intentionally not represented in this repository, that Foundry architecture must remain creator-agnostic, and that Alpha implementations may inform but never automatically redefine Foundry architecture; renumbered the former Section 10 (Recommended Next Action) to Section 11. No Camille-specific architecture created, no existing Foundry architecture modified, no phase sequencing changed, no release status changed, no tags/releases created, no source/database/config files touched. |
