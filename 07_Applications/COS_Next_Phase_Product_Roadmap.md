@@ -1,7 +1,7 @@
 # Creator OS Foundry — Next Phase Product Roadmap
 
 **Document owner:** Architecture Owner and Product Owner
-**Version:** 1.0
+**Version:** 1.1
 **Status:** Planning Artifact — No Decision Made
 **Risk class:** Moderate
 **Release status:** Not applicable — this is a planning document, not a capability release
@@ -53,6 +53,24 @@ This means the primary work ahead for most modules is **implementation against a
 
 For each candidate module: purpose, user value, technical complexity (relative to what's already designed, not from scratch), dependencies, and a recommended phase (Phase 7, 8, or 9 — see Section 3).
 
+Two entries below are not new "modules" in the same sense as the others — they are foundational primitives the review that preceded this update found missing, and both are scheduled ahead of the modules that depend on them rather than left as passing mentions.
+
+### Shared Approval / Evidence Primitive
+
+- **Purpose:** generalize the pattern already proven for documents (`document_workflow_evidence`, `document_approval_evidence`, `document_lifecycle_events`) into one reusable capability — a single, governed way to record "who approved what, against which version, with what evidence" — rather than a document-specific feature.
+- **User value:** indirect but structural — without this, every future governed entity (workflows, agents) would otherwise reinvent its own approval bookkeeping, each with its own subtly different guarantees.
+- **Technical complexity:** Low. The pattern is already implemented and live-validated for documents; this is generalization of a proven design, not new invention. The main work is abstracting the existing tables/function so `subject_type`/`subject_id` can reference a workflow or an agent as cleanly as they currently reference a document, consistent with the `approvals` table already present in `05_Database/Schema_Specification.md`'s Identity and Governance section.
+- **Dependencies:** The existing document evidence tables and `transition_document_lifecycle` pattern (exists, proven).
+- **Recommended phase:** **Phase 7 (Foundation).** Built once here so the Workflow Engine and Agent Execution Layer in Phase 8 both consume it rather than each building a separate approval system — the specific risk this addition to the roadmap is meant to close off.
+
+### Execution Safety Foundations (Incident Model, Recovery/Rollback, Execution Audit Trail)
+
+- **Purpose:** the minimum machinery required before anything in this system takes a real, side-effecting action on its own: an incident model for when something goes wrong, a recovery/rollback path for undoing or containing a bad execution, and an execution history/audit trail distinct from ordinary observability logging — a durable, queryable record of what ran, when, on whose authority, and with what outcome.
+- **User value:** indirect but load-bearing — this is what makes "AI does work" something an accountable owner can trust enough to allow, not just something that technically functions.
+- **Technical complexity:** Low-to-moderate. The `incidents` table is already schema-specified; `runs`/`run_steps` (also already specified for the Workflow Engine) provide most of what an execution audit trail needs structurally. The genuinely new work is the recovery/rollback path itself — this repository has not yet needed to design what "undo" means for an agent or workflow action, and that design does not yet exist anywhere in this repo's specifications.
+- **Dependencies:** None beyond the existing schema patterns; this does not depend on the Agent Registry or Tool Registry, which is why it can and should land alongside them rather than after.
+- **Recommended phase:** **Phase 7 (Foundation), scheduled explicitly so it exists before Phase 8's Agent Execution Layer begins, not concurrently with it and not after.** This directly addresses the System Charter's requirement that material actions have "a recovery path" — a requirement the original draft of this roadmap did not carry forward explicitly enough.
+
 ### AI Agent Registry
 
 - **Purpose:** a governed catalog of AI agent roles (identity, risk level, status, versioned specifications) — the "who" of AI work.
@@ -71,18 +89,18 @@ For each candidate module: purpose, user value, technical complexity (relative t
 
 ### Agent Execution Layer
 
-- **Purpose:** actually running AI agents against real tasks — context assembly, tool invocation, approval gates at consequential decisions, and evaluation.
+- **Purpose:** actually running AI agents against real tasks — context assembly, tool invocation, and evaluation, with approval gates at consequential decisions and execution safety handled by the shared Phase 7 primitives rather than built fresh here.
 - **User value:** high and direct — this is where "AI does work" becomes real rather than documented.
-- **Technical complexity:** High. This is qualitatively different from anything built so far — it involves live model invocation, tool-call orchestration, and real-time approval gating, not just CRUD over governed records. The existing `Agent_Execution_Framework.md` and `Agent_Evaluation_Framework.md` provide a starting design, but this is the module most likely to reveal gaps in that design once implementation starts.
-- **Dependencies:** AI Agent Registry, Tool Registry, and — critically — a Workflow Engine capable of representing multi-step agent work with approval checkpoints.
-- **Recommended phase:** **Phase 8 (Core OS Capabilities).** Should not start before both registries exist and are governed.
+- **Technical complexity:** High. This is qualitatively different from anything built so far — it involves live model invocation and tool-call orchestration, not just CRUD over governed records. The existing `Agent_Execution_Framework.md` and `Agent_Evaluation_Framework.md` provide a starting design, but this is the module most likely to reveal gaps in that design once implementation starts.
+- **Dependencies:** AI Agent Registry, Tool Registry, the Shared Approval/Evidence Primitive, and Execution Safety Foundations (all Phase 7), and — critically — a Workflow Engine capable of representing multi-step agent work with approval checkpoints.
+- **Recommended phase:** **Phase 8 (Core OS Capabilities).** Should not start before the Phase 7 registries and both new execution-safety primitives exist and are governed — this module consumes them, it does not reinvent them.
 
 ### Workflow Engine
 
 - **Purpose:** define, version, and execute multi-step processes — human, agent, or automation-driven — with dependencies, approvals, and handoffs.
 - **User value:** high — this is the connective tissue that makes "Plan and Coordinate" real, and what turns isolated registries into an actual operating system.
-- **Technical complexity:** High. Schema specified (`workflows`, `workflow_versions`, `tasks`, `runs`, `run_steps`), and one concrete workflow is already specified (`COS-WF-001_Document_Creation_Workflow.md`) as a worked example, which meaningfully de-risks the first implementation slice. The general execution engine (retries, idempotency, timeouts, recovery — per the Capability Map's "Automate Operations" section) is still a substantial, novel build.
-- **Dependencies:** Tool Registry (for any step that calls external services); benefits from, but does not strictly require, the Agent Registry if the first version only orchestrates human/automation steps.
+- **Technical complexity:** High. Schema specified (`workflows`, `workflow_versions`, `tasks`, `runs`, `run_steps`), and one concrete workflow is already specified (`COS-WF-001_Document_Creation_Workflow.md`) as a worked example, which meaningfully de-risks the first implementation slice. The general execution engine (retries, idempotency, timeouts, recovery — per the Capability Map's "Automate Operations" section) is still a substantial, novel build, though the recovery portion specifically now has a foundation to build on rather than starting blank, per Execution Safety Foundations above.
+- **Dependencies:** Tool Registry and the Shared Approval/Evidence Primitive (both Phase 7, for approval/handoff steps) and Execution Safety Foundations (Phase 7, for run recovery); benefits from, but does not strictly require, the Agent Registry if the first version only orchestrates human/automation steps.
 - **Recommended phase:** **Phase 8 (Core OS Capabilities),** starting with the already-specified COS-WF-001 as its first real workflow before generalizing.
 
 ### Automation Layer
@@ -107,7 +125,8 @@ For each candidate module: purpose, user value, technical complexity (relative t
 - **User value:** unknown until scoped — this needs a product-definition pass before a technical evaluation is meaningful.
 - **Technical complexity:** Unassessable at this time given the lack of a design to evaluate against.
 - **Dependencies:** Likely the User Workspace System and Knowledge System, but this is speculative without a scoping exercise.
-- **Recommended phase:** **Not sequenced.** Recommend a dedicated scoping/definition pass (product discovery, not implementation) before this enters any phase plan — including it in Phase 8 or 9 without that pass would be planning against an undefined target.
+- **Open question the scoping pass must explicitly answer, not default into:** is Content Operating System a genuinely separate module, or is it what the User Workspace System becomes once populated with real content-authoring features on top of the registries it unifies? These are architecturally different outcomes — a separate module implies its own governed data and lifecycle; an application layer on User Workspace System implies it inherits that system's data model and simply adds capability. This roadmap does not answer that question and should not be read as implying either answer by default.
+- **Recommended phase:** **Not sequenced — deferred discovery only.** Recommend a dedicated scoping/definition pass (product discovery, not implementation) before this enters any phase plan — including it in Phase 8 or 9 without that pass, or silently treating it as either a separate module or a foregone extension of User Workspace System, would both be planning against an undefined target.
 
 ### User Workspace System
 
@@ -129,24 +148,26 @@ For each candidate module: purpose, user value, technical complexity (relative t
 
 ### Phase 7 — Foundation
 
-**Focus:** the two registries everything else depends on, plus extending observability as a standing practice.
+**Focus:** the two registries everything else depends on, the two shared execution-safety primitives that must exist before anything executes autonomously, and extending observability as a standing practice.
 
 - AI Agent Registry (schema exists, specs exist — implement)
 - Tool Registry (schema exists — implement, plus new credential-security design)
-- Extend `observability.js` into both new services from day one
+- Shared Approval/Evidence Primitive — generalized from the proven `document_approval_evidence` pattern, so Phase 8's Workflow Engine and Agent Execution Layer both consume one capability instead of each building their own
+- Execution Safety Foundations — incident model, recovery/rollback path, and execution audit trail, landed here specifically so they exist *before* Phase 8, not alongside or after it
+- Extend `observability.js` into all four new services from day one
 - Reconcile the already-provisioned-but-unpoliced live `agents`/`tools`/`workflows` tables with whatever this phase actually builds — confirm live state before assuming it, per this roadmap's own evidentiary standard
 
-**Exit criteria (illustrative, not binding):** both registries governed with the proven lifecycle-transition pattern, RLS-tiered access proven for each, live-validated with the same rigor Phase 6.4 applied to documents.
+**Exit criteria (illustrative, not binding):** both registries governed with the proven lifecycle-transition pattern, RLS-tiered access proven for each, live-validated with the same rigor Phase 6.4 applied to documents; the shared approval primitive and execution safety foundations each independently validated before Phase 8 begins.
 
 ### Phase 8 — Core OS Capabilities
 
-**Focus:** making the registries do something — real execution.
+**Focus:** making the registries do something — real execution, built on Phase 7's shared approval and execution-safety primitives rather than reinventing them.
 
-- Workflow Engine, starting from the already-specified COS-WF-001 as its first real, concrete workflow before generalizing
+- Workflow Engine, starting from the already-specified COS-WF-001 as its first real, concrete workflow before generalizing, consuming the Phase 7 approval primitive for its handoff/approval steps
 - Automation Layer, scoped as part of the Workflow Engine's execution/trigger subsystem, not a separate build
-- Agent Execution Layer, gated on both registries from Phase 7 and the Workflow Engine's approval-checkpoint model
+- Agent Execution Layer, gated on both registries from Phase 7 and the Workflow Engine's approval-checkpoint model, and built on the Phase 7 execution-safety foundations rather than defining its own incident/recovery model
 
-**Exit criteria (illustrative):** at least one real workflow executing end-to-end with an approval gate; at least one agent executing a real, evaluated task through the governed pattern.
+**Exit criteria (illustrative):** at least one real workflow executing end-to-end with an approval gate drawn from the shared primitive; at least one agent executing a real, evaluated task through the governed pattern, with a demonstrated recovery path exercised at least once, not merely designed.
 
 ### Phase 9 — User-Facing Intelligence Layer
 
@@ -154,7 +175,7 @@ For each candidate module: purpose, user value, technical complexity (relative t
 
 - User Workspace System (Control Center), unifying Documentation, System, Agent, and Tool registries into one coherent shell
 - Agent Memory (the undesigned half of the Knowledge/Memory System), now that there are real agents and real execution history to draw on
-- A scoped definition pass for "Content Operating System" — not implementation — informed by what Phases 7–8 actually revealed about user needs
+- A scoped definition pass for "Content Operating System" — not implementation — informed by what Phases 7–8 actually revealed about user needs, and required to explicitly resolve whether it is a separate module or an application layer that evolves out of the User Workspace System built earlier in this phase, per the open question recorded in Section 2
 
 **Exit criteria (illustrative):** a single workspace shell surfacing all prior modules; at least one agent demonstrably using retrieved memory from a prior run.
 
@@ -179,6 +200,7 @@ These are the design principles every future Creator OS phase must preserve, dis
 - **Version everything.** Every governed entity — documents, agents, workflows, tools — must be able to answer "which version of this was active when," mirroring `document_versions` and the already-specified `agent_versions`/`workflow_versions` tables. A registry without versioning is not a registry, it's a mutable list.
 - **Security before scale.** RLS, workspace scoping, and (where relevant) credential handling are designed before a module's first line of business logic, not retrofitted after it works. The Tool Registry's credential-storage design in Phase 7 is the first real test of this principle beyond what's already been proven for read/write access control.
 - **Build primitives before applications.** Registries and governed primitives (Phase 7) come before the systems that consume them (Phase 8) come before the user-facing shell that unifies them (Phase 9). The Control Center is sequenced last deliberately — a dashboard unifying nothing yet would be premature, exactly as this roadmap's Section 3 already sequences it.
+- **Composable before bespoke.** Named explicitly in the System Charter's Governing Principles and, until this update, only implicitly practiced rather than stated as a standing rule here. A shared capability is designed once and reused across every module that needs it, not rebuilt per module. The Shared Approval/Evidence Primitive in Phase 7 is the first deliberate test of this principle beyond what was already true by accident for documents — it exists specifically so the Workflow Engine and Agent Execution Layer in Phase 8 consume one approval system, not two.
 
 ## What This Roadmap Does Not Do
 
@@ -202,3 +224,4 @@ These are the design principles every future Creator OS phase must preserve, dis
 | Version | Change |
 | --- | --- |
 | 1.0 | Initial roadmap: current-capability inventory, nine candidate modules evaluated against existing designs and live infrastructure, three-phase sequencing (Foundation / Core OS Capabilities / User-Facing Intelligence Layer), governance requirements for future modules. No decision made, no implementation performed. |
+| 1.1 | Updated per final architecture alignment review, sequence preserved unchanged: added "Composable before bespoke" as an explicit architectural principle; added two Phase 7 execution-safety primitives (Shared Approval/Evidence Primitive, Execution Safety Foundations covering incident model, recovery/rollback, and execution audit trail), scheduled before Phase 8's Agent Execution Layer rather than left as passing mentions; updated Agent Execution Layer and Workflow Engine dependencies to consume these shared primitives instead of building their own; clarified Content Operating System as deferred discovery with an explicit open question — separate module vs. an application layer evolving from User Workspace System — recorded rather than defaulted. No release status change, no tags/releases, no source or database changes. |
