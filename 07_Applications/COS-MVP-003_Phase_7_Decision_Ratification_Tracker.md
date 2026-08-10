@@ -1,9 +1,9 @@
 # COS-MVP-003 Phase 7 Decision Ratification Tracker
 
 **Phase:** 7 — Foundation
-**Version:** 1.0
+**Version:** 1.1
 **Document owner:** Architecture Owner
-**Status:** Governance Tracking Artifact — No Decision Made
+**Status:** Governance Tracking Artifact — Nineteen Decisions Recorded
 **Risk class:** Moderate
 **Capability ID:** COS-MVP-003
 **Release status:** Not applicable — tracking artifact, no capability exists to release
@@ -26,35 +26,56 @@ Five statuses, used consistently across every decision in this tracker:
 
 ## 3. Consolidated Decision Table
 
-All nineteen Phase 7 decisions, sourced from the three Decision Records via `COS-MVP-003_Phase_7_Accountable_Owner_Review_Package.md`. **Every status below is Pending Ratification as of this tracker's creation** — no decision has been acted on yet.
+All nineteen Phase 7 decisions, sourced from the three Decision Records via `COS-MVP-003_Phase_7_Accountable_Owner_Review_Package.md`. **Statuses below reflect the accountable-owner review recorded in `COS-MVP-003_Phase_7_Decision_Ratification_Record.md`** — see Section 4 for the corresponding history entry. This tracker update does not itself constitute ratification (per Section 6's own rule); it reflects ratification that occurred via that review.
 
 | ID | Capability | Decision | Recommendation | Owner | Status | Dependencies | Impact |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| D01 | Shared Approval/Evidence Primitive | Governed Subject Acceptance | Accept `governed_subjects` registry as designed | Architecture Owner *(inferred)* | Pending Ratification | None | Unblocks D02–D05 conceptually; foundational to the whole primitive |
-| D02 | Shared Approval/Evidence Primitive | Approval Role Model | Overlay model, no shared configurable table | Architecture Owner *(inferred)* | Pending Ratification | D01 | Determines every future subject type's role-check implementation pattern |
-| D03 | Shared Approval/Evidence Primitive | Expiry/Revalidation Behavior | Subject-type-configurable `expires_at`, no silent renewal | Architecture Owner *(inferred)* | Pending Ratification | D01 | Determines whether documents' current no-expiry behavior is preserved unchanged |
-| D04 | Shared Approval/Evidence Primitive | Evidence Retention Strategy | Indefinite by default; exceptions require separate approval | Data Owner, Security Owner *(inferred)* | Pending Ratification | None | Sets the retention precedent D10 and D17 each independently reach the same conclusion on |
-| D05 | Shared Approval/Evidence Primitive | Revocation Authority Model | Stricter role than approval; Security Owner, System Owner fallback | Security Owner, System Owner (fallback) *(inferred)* | Pending Ratification | None | Precedent basis for D12 |
-| D06 | Execution Safety Foundations | Incident Lifecycle Model | Seven-state model with `reopened` transition | Security Owner, Automation Owner (concurrence) | Pending Ratification | None | Determines `incidents` table's status field domain |
-| D07 | Execution Safety Foundations | Recovery and Rollback Authority Model | Reconciliation contract must resolve definitely; stricter role for T3/T4 | Automation Owner, Security Owner (overlay) | Pending Ratification | None | Also gated on a separate technical-feasibility question (adapter reconciliation-contract support), not resolved by ratification alone |
-| D08 | Execution Safety Foundations | Compensation Model and Evidence Handling | Authority: overlay + System Owner sign-off. Storage: deferred | Automation Owner, Security Owner (authority); Architecture Owner, Data Owner (storage) | Pending Ratification (authority); Deferred (storage) | Storage half depends on D01–D05 | Authority half can ratify independently; storage half cannot proceed until the primitive's shape is settled |
-| D09 | Execution Safety Foundations | Checkpoint/Idempotency Responsibility Model | Hybrid (Option C) — default key with override | Automation Owner | Pending Ratification | None | No known cross-decision dependency |
-| D10 | Execution Safety Foundations | Execution Audit Trail Ownership | Governed-write-only; indefinite retention by default | Data Owner, Automation Owner | Pending Ratification | None | Shares a retention posture with D04 and D17 — see Section 5 |
-| D11 | Execution Safety Foundations | Relationship with Shared Approval/Evidence Primitive | No hard dependency for the capability as a whole | Architecture Owner | Pending Ratification | None (this decision itself formalizes independence from D01–D05) | Confirms Execution Safety Foundations' own planning chain did not need to wait on D01–D05 |
-| D12 | Execution Safety Foundations | Emergency Authority Boundaries | Role-checked, time-bounded, mandatory-review model (Option B) | Security Owner, System Owner (concurrence) | Pending Ratification | None | Directly linked to D16 — see Section 5 |
-| D13 | Tool Registry Security | Credential Ownership Model | Unified ownership, no separate credential-specific role | Security Owner, Data Owner | Pending Ratification | None | Basis for D19's unified classification-authority conclusion |
-| D14 | Tool Registry Security | Secret Lifecycle Responsibility | Split by stage — Security Owner (policy), Tool Owner (execution) | Security Owner, Automation Owner (input) | Pending Ratification | None | Establishes "Tool Owner" as an operational role for future reference |
-| D15 | Tool Registry Security | Rotation and Expiration Authority | Hard expiration at `rotation_due_at`, no grace period | Security Owner | Pending Ratification | None | Direct implementation requirement on the future Tool Broker |
-| D16 | Tool Registry Security | Emergency Access Model | Existing authority list, extended with D12's time-bound/review model | Security Owner, Agent Owner, Automation Owner (concurrence) | Pending Ratification | D12 (directly extends its precedent) | If D12 changes materially, D16 needs revisiting — see Section 5 |
-| D17 | Tool Registry Security | Audit Evidence Requirements | Live-executed validation required, design review insufficient | Security Owner, Data Owner | Pending Ratification | None | Shares a retention posture with D04 and D10 — see Section 5 |
-| D18 | Tool Registry Security | Relationship to Shared Approval/Evidence Primitive | No dependency for credential-handling components | Architecture Owner | Pending Ratification | None (formalizes independence from D01–D05, parallel in structure to D11) | Confirms Tool Registry Security's own planning chain did not need to wait on D01–D05 |
-| D19 | Tool Registry Security | Tool Trust Classification Authority | Unified ownership (as D13); rigor scales by T1–T4 class | Security Owner, relevant Domain Owner | Pending Ratification | D13 | Determines whether every future tool registration must record a formal risk class before credential handling begins |
+| D01 | Shared Approval/Evidence Primitive | Governed Subject Acceptance | Accept `governed_subjects` registry as designed | Architecture Owner *(inferred)* | Approved | None | Unblocks D02–D05 conceptually; foundational to the whole primitive |
+| D02 | Shared Approval/Evidence Primitive | Approval Role Model | Overlay model, no shared configurable table | Architecture Owner *(inferred)* | Approved | D01 | Determines every future subject type's role-check implementation pattern |
+| D03 | Shared Approval/Evidence Primitive | Expiry/Revalidation Behavior | Subject-type-configurable `expires_at`, no silent renewal | Architecture Owner *(inferred)* | Approved | D01 | Determines whether documents' current no-expiry behavior is preserved unchanged |
+| D04 | Shared Approval/Evidence Primitive | Evidence Retention Strategy | Indefinite by default; exceptions require separate approval | Data Owner, Security Owner *(inferred)* | Approved | None | Sets the retention precedent D10 and D17 each independently reach the same conclusion on |
+| D05 | Shared Approval/Evidence Primitive | Revocation Authority Model | Stricter role than approval; Security Owner, System Owner fallback | Security Owner, System Owner (fallback) *(inferred)* | Approved | None | Precedent basis for D12 |
+| D06 | Execution Safety Foundations | Incident Lifecycle Model | Seven-state model with `reopened` transition | Security Owner, Automation Owner (concurrence) | Approved | None | Determines `incidents` table's status field domain |
+| D07 | Execution Safety Foundations | Recovery and Rollback Authority Model | Reconciliation contract must resolve definitely; stricter role for T3/T4 | Automation Owner, Security Owner (overlay) | Approved with Conditions | None | Also gated on a separate technical-feasibility question (adapter reconciliation-contract support), not resolved by ratification alone — preserved as an explicit condition of approval |
+| D08 | Execution Safety Foundations | Compensation Model and Evidence Handling | Authority: overlay + System Owner sign-off. Storage: deferred | Automation Owner, Security Owner (authority); Architecture Owner, Data Owner (storage) | Authority: Approved; Storage: Deferred | Storage half depends on D01–D05 | Authority half now settled; storage half remains open pending a future, dedicated decision — D01–D05 being Approved narrows but does not resolve this |
+| D09 | Execution Safety Foundations | Checkpoint/Idempotency Responsibility Model | Hybrid (Option C) — default key with override | Automation Owner | Approved | None | No known cross-decision dependency |
+| D10 | Execution Safety Foundations | Execution Audit Trail Ownership | Governed-write-only; indefinite retention by default | Data Owner, Automation Owner | Approved | None | Shares a retention posture with D04 and D17 — see Section 5 |
+| D11 | Execution Safety Foundations | Relationship with Shared Approval/Evidence Primitive | No hard dependency for the capability as a whole | Architecture Owner | Approved | None (this decision itself formalizes independence from D01–D05) | Confirms Execution Safety Foundations' own planning chain did not need to wait on D01–D05 |
+| D12 | Execution Safety Foundations | Emergency Authority Boundaries | Role-checked, time-bounded, mandatory-review model (Option B) | Security Owner, System Owner (concurrence) | Approved | None | Directly linked to D16 — see Section 5 |
+| D13 | Tool Registry Security | Credential Ownership Model | Unified ownership, no separate credential-specific role | Security Owner, Data Owner | Approved | None | Basis for D19's unified classification-authority conclusion |
+| D14 | Tool Registry Security | Secret Lifecycle Responsibility | Split by stage — Security Owner (policy), Tool Owner (execution) | Security Owner, Automation Owner (input) | Approved | None | Establishes "Tool Owner" as an operational role for future reference |
+| D15 | Tool Registry Security | Rotation and Expiration Authority | Hard expiration at `rotation_due_at`, no grace period | Security Owner | Approved | None | Direct implementation requirement on the future Tool Broker |
+| D16 | Tool Registry Security | Emergency Access Model | Existing authority list, extended with D12's time-bound/review model | Security Owner, Agent Owner, Automation Owner (concurrence) | Approved | D12 (directly extends its precedent) | D12 was Approved unchanged, so this dependency is cleanly satisfied — see Section 5 |
+| D17 | Tool Registry Security | Audit Evidence Requirements | Live-executed validation required, design review insufficient | Security Owner, Data Owner | Approved | None | Shares a retention posture with D04 and D10 — see Section 5 |
+| D18 | Tool Registry Security | Relationship to Shared Approval/Evidence Primitive | No dependency for credential-handling components | Architecture Owner | Approved | None (formalizes independence from D01–D05, parallel in structure to D11) | Confirms Tool Registry Security's own planning chain did not need to wait on D01–D05 |
+| D19 | Tool Registry Security | Tool Trust Classification Authority | Unified ownership (as D13); rigor scales by T1–T4 class | Security Owner, relevant Domain Owner | Approved | D13 | D13 was Approved unchanged, so this dependency is cleanly satisfied |
 
 ## 4. Ratification History
 
-No entries. Every decision in Section 3 remains at its default status (Pending Ratification) as of this tracker's creation. When any decision's status changes, this section must record: the decision ID, the date, the new status, the accountable owner(s) who acted, and — for Approved with Conditions, Rejected, or Deferred — the specific condition, reason, or revisit criteria in the owner's own words, not paraphrased. This section is append-only in spirit: a decision's status may change again later, but the prior entry should remain in this history, not be overwritten, so the tracker itself preserves an audit trail of how each decision reached its current state.
+| Date | Decision ID | New status | Owner(s) who acted | Condition / reason (verbatim) |
+| --- | --- | --- | --- | --- |
+| [Ratification Date — to be confirmed by accountable owner] | D01 | Approved | Architecture Owner *(inferred)* | — |
+| [Ratification Date — to be confirmed by accountable owner] | D02 | Approved | Architecture Owner *(inferred)* | — |
+| [Ratification Date — to be confirmed by accountable owner] | D03 | Approved | Architecture Owner *(inferred)* | — |
+| [Ratification Date — to be confirmed by accountable owner] | D04 | Approved | Data Owner, Security Owner *(inferred)* | — |
+| [Ratification Date — to be confirmed by accountable owner] | D05 | Approved | Security Owner, System Owner *(inferred)* | — |
+| [Ratification Date — to be confirmed by accountable owner] | D06 | Approved | Security Owner, Automation Owner | — |
+| [Ratification Date — to be confirmed by accountable owner] | D07 | Approved with Conditions | Automation Owner, Security Owner | "Reconciliation-contract feasibility remains an independent implementation validation gate." / "Recovery implementation cannot proceed without confirmed reconciliation outcomes." |
+| [Ratification Date — to be confirmed by accountable owner] | D08 (authority) | Approved | Automation Owner, Security Owner | — |
+| [Ratification Date — to be confirmed by accountable owner] | D08 (storage) | Deferred | Architecture Owner, Data Owner | "Storage location requires a future explicit decision determining whether compensation evidence belongs in the Shared Approval/Evidence Primitive or dedicated compensation storage." |
+| [Ratification Date — to be confirmed by accountable owner] | D09 | Approved | Automation Owner | — |
+| [Ratification Date — to be confirmed by accountable owner] | D10 | Approved | Data Owner, Automation Owner | — |
+| [Ratification Date — to be confirmed by accountable owner] | D11 | Approved | Architecture Owner | — |
+| [Ratification Date — to be confirmed by accountable owner] | D12 | Approved | Security Owner, System Owner | — |
+| [Ratification Date — to be confirmed by accountable owner] | D13 | Approved | Security Owner, Data Owner | — |
+| [Ratification Date — to be confirmed by accountable owner] | D14 | Approved | Security Owner, Automation Owner | — |
+| [Ratification Date — to be confirmed by accountable owner] | D15 | Approved | Security Owner | — |
+| [Ratification Date — to be confirmed by accountable owner] | D16 | Approved | Security Owner, Agent Owner, Automation Owner | — |
+| [Ratification Date — to be confirmed by accountable owner] | D17 | Approved | Security Owner, Data Owner | — |
+| [Ratification Date — to be confirmed by accountable owner] | D18 | Approved | Architecture Owner | — |
+| [Ratification Date — to be confirmed by accountable owner] | D19 | Approved | Security Owner, relevant Domain Owner | — |
 
-*(Table intentionally empty pending the first ratification action.)*
+**Review completed; outcomes recorded.** Full detail (recommendation restated, rationale, downstream impact) for each decision above is recorded in `COS-MVP-003_Phase_7_Decision_Ratification_Record.md`, the authoritative narrative account of this review. **No implementation, migration, SQL, credential provisioning, or release action was authorized as part of this review.** This table is append-only in spirit: any future change to any of these outcomes should be added as a new row, not by editing an existing one.
 
 ## 5. Dependency Impact Tracking
 
@@ -109,3 +130,4 @@ Cross-decision relationships that a status change in one decision could affect, 
 | Version | Change |
 | --- | --- |
 | 1.0 | Initial decision ratification tracker: purpose distinguishing this living tracker from the one-time Review Package; five decision status definitions (Pending Ratification, Approved, Approved with Conditions, Rejected, Deferred); a consolidated 19-row decision table (D01–D19) with ID, capability, decision, recommendation, owner, status, dependencies, and impact for every Phase 7 decision, all currently Pending Ratification; an empty Ratification History section awaiting the first status change; dependency impact tracking covering five cross-decision relationships (D01–D05→D08, D12→D16, D04/D10/D17 shared retention posture, D13→D19, D11/D18 independence findings); six change-management rules governing how this tracker may be updated; explicit out-of-scope boundaries. No decision made, no decision ratified, no implementation performed, no release status changed. |
+| 1.1 | Recorded the outcomes of the accountable-owner decision review documented in `COS-MVP-003_Phase_7_Decision_Ratification_Record.md`: Section 3 statuses updated from Pending Ratification to Approved for D01–D06 and D09–D19; D07 updated to Approved with Conditions (two conditions preserved verbatim); D08 updated to Authority: Approved, Storage: Deferred (reason preserved verbatim). Section 4 populated with nineteen ratification-history rows (one per decision, D08 split into two rows for its authority and storage halves), each dated with a placeholder pending accountable-owner confirmation of the exact ratification date. This update reflects ratification that occurred via the source review; it does not itself constitute a ratification action, per Section 6's own rule. No implementation, migration, SQL, credential, or release action was authorized. No source, database, or config file changed; no release status changed. |
