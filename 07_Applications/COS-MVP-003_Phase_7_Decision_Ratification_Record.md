@@ -1,9 +1,9 @@
 # COS-MVP-003 Phase 7 Decision Ratification Record
 
 **Phase:** 7 — Foundation
-**Version:** 1.0
+**Version:** 1.1
 **Document owner:** Architecture Owner
-**Status:** Ratification Record — Outcomes Recorded
+**Status:** Ratification Record — Outcomes Recorded (Zero Decisions Remain Deferred)
 **Risk class:** High
 **Capability ID:** COS-MVP-003
 **Release status:** Not applicable — ratification record, no capability exists to release
@@ -72,12 +72,16 @@ This is the immutable post-review record of the accountable-owner decision revie
 
 **D08 — Compensation Model and Evidence Handling**
 - **Recommendation (authority):** a role stricter than recovery, plus mandatory System Owner sign-off for actions within `Workflow_Design_Standards.md`'s "irreversible limits" category.
-- **Recommendation (storage):** no recommendation given in the source Decision Record — explicitly left open pending the Shared Approval/Evidence Primitive's own ratified shape.
+- **Recommendation (storage, as originally recorded):** no recommendation given in the source Decision Record — explicitly left open pending the Shared Approval/Evidence Primitive's own ratified shape.
 - **Final outcome — Authority:** **Approved**, as recommended, no conditions.
-- **Final outcome — Storage:** **Deferred.**
-- **Reason for deferral (recorded verbatim):** storage location requires a future explicit decision determining whether compensation evidence belongs in the Shared Approval/Evidence Primitive or dedicated compensation storage.
+- **Final outcome — Storage:** **Approved with Conditions**, resolved in a subsequent Phase 7 closure review conducted after D01–D05's ratification made the primitive's actual shape knowable.
+- **Storage decision:** dedicated `compensation_evidence` storage — a table separate from the Shared Approval/Evidence Primitive's own evidence tables.
+- **Conditions (recorded verbatim):**
+  1. Must follow existing governance/security conventions: revoke-first grants; three-tier RLS; `SECURITY DEFINER` implementation in `creator_os_private`; thin `public` wrapper; no direct application-role writes.
+  2. Future migration to the Shared Approval/Evidence Primitive remains possible if the primitive is later extended with the fields compensation-specific evidence requires.
+- **Basis for the storage decision:** reassessed against the primitive's now-ratified shape and found to be an imperfect fit for direct reuse — `approval_decision_evidence`'s `subject_version_id` binding assumes a versioning concept that doesn't map cleanly onto a run, and compensation's actual data needs (`precondition_verified`, `is_irreversible_limit`, `system_owner_signoff_id`, `is_emergency`, `review_due_at`) have no equivalent typed columns in the ratified primitive schema, whose own Technical Design explicitly rejected JSONB-style generic fields in favor of typed columns. A dedicated table avoids extending the just-ratified primitive and avoids weakening its typed-column discipline, while remaining fully consistent with this repository's existing precedent of domain-specific evidence tables (the document pattern, `audit.events`) rather than one universal table.
 - **Accountable owner:** Automation Owner, Security Owner (authority); Architecture Owner, Data Owner (storage).
-- **Downstream impact:** the authority half is now settled and may inform the eventual Implementation Specification's compensation-authorization function directly. The storage half remains open — notably, D01–D05 (the primitive's shape) have now been Approved in this same review, which materially narrows the uncertainty that originally motivated the deferral, though this record does not resolve the storage question itself; that remains a distinct, future decision.
+- **Downstream impact:** both halves of D08 are now settled. The eventual Execution Safety Foundations Implementation Specification and Schema Design Review may proceed with a concrete `compensation_evidence` entity rather than a provisional, unspecified one.
 
 **D09 — Checkpoint/Idempotency Responsibility Model**
 - **Recommendation:** hybrid (Option C) — a default-derived idempotency key from standard run/step metadata, with an explicit override path for finer-grained cases.
@@ -152,20 +156,20 @@ This is the immutable post-review record of the accountable-owner decision revie
 | Outcome | Count | Decisions |
 | --- | --- | --- |
 | Approved (as recommended, no conditions) | 16 | D01, D02, D03, D04, D05, D06, D08 (authority), D09, D10, D11, D12, D13, D14, D15, D16, D17, D18, D19 |
-| Approved with Conditions | 1 | D07 |
-| Deferred | 1 | D08 (storage half only) |
+| Approved with Conditions | 2 | D07; D08 (storage half) |
+| Deferred | 0 | None remaining |
 | Rejected | 0 | None |
 
-*(Note: D08 is counted once as a split decision — its authority half is Approved, contributing to the 16 fully-approved count above; its storage half is separately Deferred.)*
+*(Note: D08 is counted as a split decision throughout — its authority half is Approved, contributing to the 16 fully-approved count above; its storage half is separately Approved with Conditions, contributing to the count of 2.)*
 
-**Zero decisions were rejected.** One decision (D07) was approved with two explicitly recorded conditions. One sub-decision (D08's storage half) remains explicitly deferred, with its own stated reason.
+**Zero decisions were rejected. Zero decisions remain deferred.** D07 and D08's storage half were each approved with explicitly recorded conditions; every other decision was approved exactly as recommended.
 
 ## What This Ratification Does Not Do
 
 - **It does not authorize implementation of any kind.** Ratifying a recommendation's direction is a governance act, distinct from authorizing engineering work to begin on it. No such authorization has been given, here or elsewhere.
 - **It does not create any database migration, write any SQL, or modify any application source, database, or config file.**
 - **It does not resolve D07's underlying technical-feasibility question** (integration-adapter reconciliation-contract support) — that remains a separate, unresolved validation gate, explicitly preserved as a condition of D07's approval.
-- **It does not resolve D08's storage question** — it remains genuinely open, to be decided in a future, dedicated decision.
+- **It does not authorize creation of the `compensation_evidence` table** — D08's storage decision settles *where* compensation evidence will live once built, not that it has been built; no migration, SQL, or schema object has been created as a result of this decision.
 - **It does not change COS-MVP-002's release status**, which remains **Not Released**, entirely unaffected by this Phase 7 governance process.
 - **It does not create or reference any tag or release.**
 - **It does not authorize any credential, secret, or secret-manager configuration** — Tool Registry Security's decisions being ratified does not mean any actual credential now exists or may be provisioned.
@@ -174,14 +178,18 @@ This is the immutable post-review record of the accountable-owner decision revie
 
 | Date | Action | Decisions affected | Notes |
 | --- | --- | --- | --- |
-| [Ratification Date — to be confirmed by accountable owner] | Review completed; outcomes recorded | D01–D19 (all nineteen) | Full accountable-owner review conducted across `COS-MVP-003_Phase_7_Decision_Ratification_Briefing_Packets.md`. 16 decisions Approved as recommended, D07 Approved with two conditions, D08's storage half Deferred with a stated reason. **No implementation authorized** as part of this review. This record is the first entry in what is intended to remain an append-only history — any future amendment to any of these outcomes should be added as a new entry below this one, not by editing this row. |
+| [Ratification Date — to be confirmed by accountable owner] | Review completed; outcomes recorded | D01–D19 (all nineteen) | Full accountable-owner review conducted across `COS-MVP-003_Phase_7_Decision_Ratification_Briefing_Packets.md`. 16 decisions Approved as recommended, D07 Approved with two conditions, D08's storage half Deferred with a stated reason. **No implementation authorized** as part of this review. |
+| [Ratification Date — to be confirmed by accountable owner] | D08 storage decision resolved | D08 (storage half) | Resolved in a subsequent Phase 7 closure review, conducted after D01–D05's ratification made the Shared Approval/Evidence Primitive's actual shape knowable. Outcome: Approved with Conditions — dedicated `compensation_evidence` storage, subject to the two conditions recorded above. **No implementation authorized** as part of this closure action; no migration, SQL, source, or config file was created or modified. |
+
+This record is intended to remain an append-only history — any future amendment to any of these outcomes should be added as a new entry above, not by editing an existing row.
 
 ## Explicit Out of Scope
 
 - **Rewriting or reinterpreting any source Decision Record's own recommendation text** — none is altered by this document.
 - **Any implementation, migration, or SQL.**
 - **Any credential, secret, or secret-manager configuration.**
-- **Resolution of D07's technical-feasibility gate or D08's storage question** — both remain open, exactly as recorded above.
+- **Resolution of D07's technical-feasibility gate** — remains open, exactly as recorded above.
+- **Creation of the `compensation_evidence` table itself** — its location is now decided; its existence is not.
 - **Any change to COS-MVP-002's release status.**
 - **Any tag or release.**
 - **Any change to the Phase 7 → Phase 8 → Phase 9 sequencing** established by `COS_Next_Phase_Product_Roadmap.md`.
@@ -203,3 +211,4 @@ This is the immutable post-review record of the accountable-owner decision revie
 | Version | Change |
 | --- | --- |
 | 1.0 | Initial Phase 7 decision ratification record: purpose and scope; relationship to source Decision Records and the Ratification Tracker; per-decision outcomes for all nineteen decisions (recommendation restated, final outcome, conditions or deferral reason where applicable, accountable owner, downstream impact); a summary-of-outcomes table (16 Approved, 1 Approved with Conditions, 1 sub-decision Deferred, 0 Rejected); explicit statements of what this ratification does not do (no implementation, migration, SQL, credential, or release action; D07's technical-feasibility gate and D08's storage question both remain open); a ratification history table with its first entry; explicit out-of-scope boundaries. No implementation performed, no SQL written, no release status changed. |
+| 1.1 | Recorded resolution of D08's storage half: dedicated `compensation_evidence` storage, Approved with Conditions (governance-convention compliance; future migration to the primitive remains possible), with the reassessment basis stated. Updated the summary-of-outcomes table (2 Approved with Conditions, 0 Deferred), "What This Ratification Does Not Do," Ratification History (new append-only entry), and Explicit Out of Scope accordingly. No prior decision's recorded outcome was altered. No implementation performed, no SQL written, no migration created, no release status changed. |
