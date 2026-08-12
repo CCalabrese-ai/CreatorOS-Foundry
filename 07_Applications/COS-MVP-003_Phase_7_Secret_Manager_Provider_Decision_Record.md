@@ -1,12 +1,27 @@
 # COS-MVP-003 Phase 7 Secret Manager / Provider Decision Record
 
 **Phase:** 7 — Foundation
-**Version:** 1.0
+**Version:** 1.1
 **Document owner:** Security Owner and Architecture Owner
-**Status:** Decision Support — Pending Accountable-Owner Approval
+**Status:** Decision Recorded — Approved with Conditions (Supabase Vault); Implementation Not Authorized
 **Risk class:** High
 **Capability ID:** COS-MVP-003
 **Release status:** Not applicable — governance decision-support document, no capability exists to release
+
+## Final Decision Outcome
+
+**Outcome:** APPROVE WITH CONDITIONS
+**Selected provider direction:** Supabase Vault
+**Conditions (recorded verbatim):**
+1. Confirm availability and compatibility in the target Supabase environment.
+2. Confirm rotation, revocation, expiration, and emergency workflows satisfy D17 validation requirements.
+3. Confirm operational burden is acceptable compared with AWS Secrets Manager alternative.
+
+**Implementation: Not authorized.** This decision names a provider direction — it does not configure Supabase Vault, create any credential, or create any infrastructure.
+
+**Validation: Required before production-ready credential handling.** All three conditions above must be confirmed, and D17's own live-executed validation suite must be completed and passing, before Tool Registry Security credential handling is considered validated. This decision does not itself satisfy any part of that requirement.
+
+This outcome supersedes Section 6's recommendation only insofar as it converts that recommendation into a ratified direction — every unresolved fact Section 6 originally flagged (Vault extension enablement/plan-tier compatibility, and the custom-build cost relative to AWS Secrets Manager) is preserved below as an explicit condition, not resolved by this outcome.
 
 ## Purpose
 
@@ -14,7 +29,7 @@
 
 ## Maintaining the Distinction
 
-- **Recommendation ≠ approval.** Section 6's recommendation is exactly that — a recommendation. It becomes a decision only when an accountable owner selects one of Section 9's options.
+- **Recommendation ≠ approval.** Section 6's recommendation was exactly that — a recommendation. It became the decision recorded in the Final Decision Outcome above only once the accountable owner explicitly selected Approve with Conditions in Section 9 — the recommendation did not self-execute.
 - **Evaluation ≠ configuration.** Comparing candidates' capabilities does not configure, provision, or connect to any of them.
 - **A clearly-reasoned recommendation ≠ a confident guess about this repository's specific infrastructure.** Where this document cannot verify a fact about Creator OS Foundry's actual environment (e.g., current Supabase plan tier, existing cloud-vendor relationships), it says so plainly rather than assuming favorably or unfavorably.
 
@@ -223,34 +238,35 @@ Grounded directly in existing repository roles — no new role is introduced:
 
 ## 9. Decision Options
 
-Presented for the accountable owner's explicit selection — none is applied by this document:
+Presented for the accountable owner's explicit selection. **Selected: APPROVE WITH CONDITIONS**, per the Final Decision Outcome recorded above — the three conditions the accountable owner attached are recorded there verbatim, not the illustrative examples originally offered below, which are retained for reference only:
 
-- **APPROVE** — accept the recommendation (Supabase Vault) as stated.
-- **APPROVE WITH CONDITIONS** — accept a candidate (Supabase Vault or another) subject to specific, named conditions. Possible examples, **not applied automatically**: requiring confirmation that the Vault extension is enabled before proceeding; requiring a specific custom-audit-logging design to be reviewed before D17 validation begins; requiring a documented rotation-automation design before implementation starts.
-- **REJECT** — decline the recommended candidate and request an alternative evaluation, a different candidate emphasis, or additional criteria this document did not consider.
-- **DEFER** — decline to decide at this time, with a stated reason and, where known, a condition or timeframe for revisiting.
+- **APPROVE** — accept the recommendation (Supabase Vault) as stated. *(Not selected.)*
+- **APPROVE WITH CONDITIONS** — accept a candidate (Supabase Vault or another) subject to specific, named conditions. **← Selected.** Illustrative examples originally offered here, not applied automatically and not the conditions actually attached: requiring confirmation that the Vault extension is enabled before proceeding; requiring a specific custom-audit-logging design to be reviewed before D17 validation begins; requiring a documented rotation-automation design before implementation starts. The actual conditions attached appear in the Final Decision Outcome section above.
+- **REJECT** — decline the recommended candidate and request an alternative evaluation, a different candidate emphasis, or additional criteria this document did not consider. *(Not selected.)*
+- **DEFER** — decline to decide at this time, with a stated reason and, where known, a condition or timeframe for revisiting. *(Not selected.)*
 
 ## 10. Downstream Impact
 
-**Provider selection would unlock:**
-- **G04 Tool Registry Security validation preparation** — the specific provider's own test/staging tier could then be scoped for use.
-- **D17 live-executed credential testing** — a concrete target for rotation, revocation, emergency-pause, and expiration tests.
+**Now that a provider direction is selected, the following can be scoped concretely** — none is performed by this document, and none proceeds until the conditions below are satisfied:
+- **G04 Tool Registry Security validation preparation** — Supabase Vault's own test/staging tier can now be identified as the target, once Condition 1 (availability/compatibility) is confirmed.
+- **D17 live-executed credential testing** — a concrete target for rotation, revocation, emergency-pause, and expiration tests, once Condition 2 (workflow satisfaction) is confirmed.
 - **Test credential provisioning** — a defined path for provisioning genuinely test-scoped credentials, per `Secrets_Management.md`'s existing Provisioning Process.
-- **Rotation testing** — a specific provider's rotation mechanism (native or custom-built, per Section 3) to actually test against.
-- **Revocation testing** — a specific provider's revocation behavior to confirm.
-- **Emergency-pause testing** — a specific provider's support (or lack thereof) for immediate, exceptional access removal.
-- **Expiration testing** — a specific provider's support for hard, no-grace-period expiration enforcement.
+- **Rotation, revocation, emergency-pause, and expiration testing** — each now has a named provider to test against, but each remains blocked until this decision's own three conditions are confirmed and the live-executed tests are actually performed.
 
-**Provider selection does not automatically clear G04.** It removes exactly one prerequisite — per `COS-MVP-003_Phase_7_Remaining_Gates_Closure_Plan.md`'s own dependency mapping, G04 additionally requires G05 (a live/staging environment), neither of which this decision resolves.
+**Provider selection does not clear G04, and does not mark Tool Registry Security validation unblocked.** It removes exactly one prerequisite — the provider question — while three new, explicit verification items (this decision's own conditions) and the pre-existing G05 (live/staging environment) requirement all remain outstanding. Per `COS-MVP-003_Phase_7_Remaining_Gates_Closure_Plan.md`'s own dependency mapping, G04 requires both G05 and G06 — G06 is now resolved with conditions, not simply resolved, and G05 is untouched by this decision.
 
 ## 11. Implementation Preconditions
 
-Prerequisites that would still remain after provider approval — **none implemented by this document:**
+Prerequisites that remain even after this decision's approval — **none implemented by this document:**
 
+- **This decision's own three conditions**, unresolved as of this recording:
+  1. Availability and compatibility of Supabase Vault in the target Supabase environment — not yet confirmed.
+  2. Whether rotation, revocation, expiration, and emergency workflows satisfy D17's validation requirements — not yet confirmed.
+  3. Whether operational burden is acceptable compared with the AWS Secrets Manager alternative — not yet confirmed.
 - **G05 (live/staging environment)** — per `COS-MVP-003_Phase_7_Validation_Environment_Readiness_Requirements.md`, still unavailable in this session.
-- **Safe test credentials** — provisioned only after both the provider is selected and an environment exists.
+- **Safe test credentials** — provisioned only after the three conditions above are confirmed and an environment exists.
 - **Schema/planning dependencies** — the `credential_references`/`integrations` schema remains at the design-review stage, not yet migrated.
-- **Access controls** — administrative access to the selected provider's test/staging tier, not yet established.
+- **Access controls** — administrative access to Supabase Vault's own test/staging tier, not yet established.
 - **Validation ownership** — a named individual or role actually executing D17's test suite, not yet assigned.
 - **Evidence capture** — a durable mechanism for recording test results as actual evidence artifacts, per this repository's consistent standard, not yet built.
 
@@ -280,6 +296,14 @@ This document explicitly does **not**:
 - It does not change COS-MVP-002's or any other capability's release status, which remains **Not Released**.
 - It does not create or reference any tag or release.
 
+## Ratification History
+
+| Date | Action | Owner(s) who acted | Condition text (verbatim) |
+| --- | --- | --- | --- |
+| [Ratification Date — to be confirmed by accountable owner] | G06 decided: Approve with Conditions, Supabase Vault | Security Owner and Architecture Owner (per this document's ownership) | "Confirm availability and compatibility in the target Supabase environment." / "Confirm rotation, revocation, expiration, and emergency workflows satisfy D17 validation requirements." / "Confirm operational burden is acceptable compared with AWS Secrets Manager alternative." Implementation not authorized; validation required before production-ready credential handling. |
+
+This entry is append-only in spirit, consistent with `COS-MVP-003_Phase_7_Decision_Ratification_Tracker.md`'s own convention — any future change to this outcome should be added as a new row, not by editing this one.
+
 ## References
 
 - [COS-MVP-003 Phase 7 Secret Manager Provider Decision Framework](COS-MVP-003_Phase_7_Secret_Manager_Provider_Decision_Framework.md) — the evaluation criteria and process this record applies
@@ -298,3 +322,4 @@ This document explicitly does **not**:
 | Version | Change |
 | --- | --- |
 | 1.0 | Initial secret manager / provider decision record: decision statement and scope; requirements pulled from repository sources across six categories; four realistic candidates evaluated (Supabase Vault, AWS Secrets Manager, Doppler, HashiCorp Vault) with capabilities stated as general product knowledge and Creator-OS-Foundry-specific unknowns explicitly flagged; a full evaluation matrix with "requires verification" used wherever a rating depended on an unconfirmed repository fact; a tradeoff analysis per candidate; a recommendation for Supabase Vault conditioned on two named unresolved facts, explicitly not forced; AWS Secrets Manager identified as the strongest alternative with its own tradeoff case; accountable ownership distinguishing who recommends, who approves, and who would operate; four explicit decision options (Approve/Approve with Conditions/Reject/Defer) presented without being applied; downstream impact clarifying provider selection removes one prerequisite, not all of G04; implementation preconditions still remaining after approval; explicit governance boundaries. No provider selected, no credential created, no implementation performed, no D01–D19 outcome changed, no release status changed. |
+| 1.1 | Recorded the accountable-owner outcome: G06 decided as Approve with Conditions, Supabase Vault, with the three conditions preserved verbatim (environment availability/compatibility; D17 workflow satisfaction; operational burden vs. AWS Secrets Manager). Added a Final Decision Outcome section stating implementation is not authorized and validation remains required before production-ready credential handling; marked the selected option in Section 9; updated Section 10 to clarify provider selection removes only the provider prerequisite, not G04 or G05; updated Section 11 to add the three conditions as still-outstanding preconditions alongside G05; added a Ratification History table. No configuration performed, no credential created, no infrastructure created, no validation executed, no D01–D19 outcome changed, no release status changed. |

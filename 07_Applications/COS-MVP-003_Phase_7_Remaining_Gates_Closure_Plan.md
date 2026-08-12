@@ -1,9 +1,9 @@
 # COS-MVP-003 Phase 7 Remaining Gates Closure Plan
 
 **Phase:** 7 — Foundation
-**Version:** 1.0
+**Version:** 1.1
 **Document owner:** Architecture Owner
-**Status:** Closure Planning Artifact — No Decision Made
+**Status:** Closure Planning Artifact — G06 Resolved with Conditions; G01, G05, G07, G08 Remain Open
 **Risk class:** Moderate
 **Capability ID:** COS-MVP-003
 **Release status:** Not applicable — planning/governance document, no capability exists to release
@@ -26,9 +26,9 @@ Phase 7 decision-making is complete — all nineteen decisions across three Deci
 | G01 | D07 Reconciliation-Contract Feasibility | Technical Feasibility Gate | Open — unresolved | D07's own approval condition requires "recovery implementation cannot proceed without confirmed reconciliation outcomes"; whether real integration adapters can support the three-outcome (`confirmed-succeeded`/`confirmed-failed`/`unknown`) contract has never been tested | Adapter research/testing producing evidence the contract is achievable for at least the adapters this repository actually uses, or a documented fallback for any adapter class that cannot support it | None — requires adapter/API access, not a database environment | Automation Owner, Security Owner |
 | G02 | Shared Approval/Evidence Primitive Live Validation | Validation Gate | Blocked — environment unavailable | Migration Design Plan §7 requires live-executed RLS/security, lifecycle-transition, self-approval-prevention, and evidence-integrity tests plus a document-compatibility regression, before migration execution | Full test suite executed in a live/staging environment with evidence recorded | G05 | Data Owner, Architecture Owner, Security Owner |
 | G03 | Execution Safety Foundations Live Validation | Validation Gate | Blocked — environment unavailable; reconciliation/recovery tests additionally blocked on G01 | Implementation Specification §8 requires live-executed quarantine, reconciliation, compensation, idempotency, self-compensation-denial, RLS, and demonstrated end-to-end recovery tests | Full test suite executed with evidence recorded; the compensation test now has a known target (`compensation_evidence`, per the D08 resolution) | G05 (all tests); G01 (reconciliation and end-to-end recovery tests specifically) | Automation Owner, Security Owner, Data Owner |
-| G04 | Tool Registry Security Live Validation | Validation Gate | Blocked — environment unavailable; provider selection additionally required | Decision Record D17 requires live-executed rotation, revocation, emergency-pause, expiration, and self-approval-denial tests before credential handling is considered validated | Full test suite executed with evidence recorded | G05; G06 | Security Owner, Data Owner |
+| G04 | Tool Registry Security Live Validation | Validation Gate | Blocked — provider direction now selected (Supabase Vault, per G06), but environment remains unavailable and G06's own three conditions remain unconfirmed | Decision Record D17 requires live-executed rotation, revocation, emergency-pause, expiration, and self-approval-denial tests before credential handling is considered validated | Full test suite executed with evidence recorded, **and** G06's three conditions confirmed, **and** G05 satisfied | G05; G06 (resolved with conditions, not fully cleared) | Security Owner, Data Owner |
 | G05 | Live/Staging Environment Availability | Environment Gate | Blocked — no live-database tool available in this session | Every live-executed validation requirement across all three chains needs actual database access (migration execution, `SET LOCAL ROLE` role assumption, rollback capability) — confirmed unavailable during both the Live-State Reconciliation and Validation Readiness reviews | A session or tooling with genuine access to a live or staging Supabase project | None — independent prerequisite | Architecture Owner, Data Owner |
-| G06 | Secret Manager / Provider Decision | Policy Decision Gate | Open — unresolved policy question | The Tool Registry Security Decision Record explicitly left the specific secret-manager provider unselected; `Secrets_Management.md` names only a generic requirement ("an approved secret manager or platform-protected secret facility") | An explicit decision naming the provider, evaluated against stated criteria | None — independent of environment and of G01 | Security Owner |
+| G06 | Secret Manager / Provider Decision | Policy Decision Gate | **Resolved with Conditions** — Approved: Supabase Vault, per `COS-MVP-003_Phase_7_Secret_Manager_Provider_Decision_Record.md`. Three conditions remain unconfirmed: (1) environment availability/compatibility, (2) D17 workflow satisfaction, (3) operational burden vs. AWS Secrets Manager | The Tool Registry Security Decision Record explicitly left the specific secret-manager provider unselected; `Secrets_Management.md` names only a generic requirement ("an approved secret manager or platform-protected secret facility") | The provider direction is now named — full closure additionally requires all three attached conditions to be confirmed, not merely the provider question itself | None — independent of environment and of G01. Its own resolution does not clear G04, which separately requires G05 and confirmation of G06's three conditions | Security Owner |
 | G07 | Agent Registry Planning Chain | Planning Completeness Gate | Not started — zero documents | Per `COS_Architecture_Implementation_Map.md`'s Recommended Build Order, Agent Registry planning should not begin until the Shared Approval/Evidence Primitive reaches implementation-ready status (ratified **and** validated), to avoid designing an approval-gated lifecycle against an unvalidated mechanism | G02 clears **and** the actual six-or-seven-document planning chain (Implementation Plan → ... → Readiness Review) is produced | G02 | Architecture Owner, Agent Owner |
 | G08 | Tool Registry Full Lifecycle Planning Chain | Planning Completeness Gate | Not started — zero documents (distinct from the completed Tool Registry Security sub-chain) | Same reasoning as G07, plus the full lifecycle's credential handling would build directly on the Tool Registry Security sub-chain's own validated design | G02 clears; G04 clears; the actual planning chain is produced | G02, G04 | Architecture Owner, Security Owner |
 
@@ -69,7 +69,7 @@ G02 + G03 + G04 fully validated, and G07 + G08 actually produced (not merely "re
                     (Workflow Engine, Agent Execution Layer, Tool Execution)
 ```
 
-**Reading the map:** G05 (environment) is the single widest-reaching prerequisite, gating all three validation suites. G01 (D07 feasibility) gates only the reconciliation- and recovery-specific portion of G03, not the whole suite — the quarantine, idempotency, self-compensation-denial, and RLS tests within G03 do not depend on G01. G06 (secret-manager decision) gates G04 specifically and nothing else. G07 and G08 both require their respective validation gates to *clear*, not merely for decisions to be ratified — ratification alone (already complete) was never sufficient for either, per the Gate Resolution Plan's own "implementation-ready" definition. Phase 8 sits at the end of every path.
+**Reading the map:** G05 (environment) is the single widest-reaching prerequisite, gating all three validation suites. G01 (D07 feasibility) gates only the reconciliation- and recovery-specific portion of G03, not the whole suite — the quarantine, idempotency, self-compensation-denial, and RLS tests within G03 do not depend on G01. G06 (secret-manager decision) gates G04 specifically and nothing else — its provider question is now resolved (Supabase Vault, Approved with Conditions), but its three attached conditions remain unconfirmed and still gate G04 exactly as the unresolved decision previously did. G07 and G08 both require their respective validation gates to *clear*, not merely for decisions to be ratified — ratification alone (already complete) was never sufficient for either, per the Gate Resolution Plan's own "implementation-ready" definition. Phase 8 sits at the end of every path.
 
 ## 4. Recommended Closure Sequence
 
@@ -77,19 +77,18 @@ Considerations only — this section does not authorize or mandate any order.
 
 **Can proceed without infrastructure:**
 - G01 (D07 feasibility) — requires adapter/API access, not a database environment.
-- G06 (secret-manager/provider decision) — a decision, not a test.
+- G06's three attached conditions (environment availability/compatibility research, D17 workflow-satisfaction assessment) can largely be assessed without a live environment, though condition 1 specifically may require at least limited environment access to confirm.
 
-**Requires a decision, not testing:**
-- G06 specifically — evaluation against stated criteria, then a selection.
+**G06 — resolved with conditions, not a remaining decision.** The provider question itself has been decided (Approved with Conditions, Supabase Vault, per `COS-MVP-003_Phase_7_Secret_Manager_Provider_Decision_Record.md`). What remains is not a further decision but confirmation of the three conditions already attached to that decision.
 
 **Requires testing (and therefore G05):**
-- G02, G03, G04 — none can be executed without live/staging database access; G03's reconciliation-dependent tests additionally wait on G01; G04 additionally waits on G06.
+- G02, G03, G04 — none can be executed without live/staging database access; G03's reconciliation-dependent tests additionally wait on G01; G04 additionally waits on G06's three conditions being confirmed, not merely on G06's provider question, which is now settled.
 
 **Requires new planning documents:**
 - G07 — an entire Implementation-Plan-through-Readiness-Review chain, contingent on G02 clearing first.
 - G08 — the same, contingent on both G02 and G04 clearing.
 
-**A natural ordering this analysis surfaces, without mandating it:** G01 and G06 are the only two items requiring no environment at all, so resolving both first — in either order, since they don't depend on each other — would leave G05 (environment) as the single remaining prerequisite for all three validation suites, and clear the way for G07/G08's own planning work to begin as soon as G02 (and, for G08, G04) validate successfully. This is one coherent path among several; nothing here requires it be followed in this order.
+**A natural ordering this analysis surfaces, without mandating it:** G01 (still fully open) and G06's remaining conditions are the items least dependent on a live environment, so addressing both first would leave G05 (environment) as the single remaining prerequisite for all three validation suites, and clear the way for G07/G08's own planning work to begin as soon as G02 (and, for G08, G04) validate successfully. This is one coherent path among several; nothing here requires it be followed in this order.
 
 ## 5. Phase 8 Readiness Impact
 
@@ -103,13 +102,13 @@ Restated and organized from `COS-MVP-003_Phase_8_Transition_Readiness_Review.md`
 **Partially unblocked:**
 - **Approval-gate mechanism (design level).** D01–D05's decisions are ratified, so the primitive's shape is settled — but G02's live validation hasn't run, so the mechanism is not implementation-ready.
 - **Execution-audit-trail specifics (design level).** D10 is ratified and the schema now includes the resolved `compensation_evidence` entity — but G03's live validation hasn't run.
-- **Tool Registry Security (design level).** D13–D19 are ratified — but G04's live validation, gated on G05 and G06, hasn't run.
+- **Tool Registry Security (design level).** D13–D19 are ratified, and a provider direction is now selected (Supabase Vault, Approved with Conditions) — but G04's live validation has not run, and remains blocked on G05 (environment) and on confirmation of G06's three attached conditions. **Tool Registry Security is not fully unblocked** — provider selection narrowed one prerequisite, it did not clear the gate.
 
 **Ready for future planning (no gate blocks these):**
 - Continued extension of `src/services/observability.js` into new services — no Phase 7 gate touches this.
 - Documentation-only review of `COS-WF-001`'s existing specification — a comprehension exercise, not a design commitment, unaffected by any gate above.
 
-**No Phase 8 capability is fully unblocked as of this closure plan.** The path from here to Phase 8 substantive planning readiness runs entirely through G01, G05, G06, and the subsequent completion of G02–G04 and G07–G08, in whatever order the accountable owners choose.
+**No Phase 8 capability is fully unblocked as of this closure plan.** The path from here to Phase 8 substantive planning readiness runs entirely through G01 (still fully open), G05 (still unavailable), confirmation of G06's three conditions (its provider question is settled, its conditions are not), and the subsequent completion of G02–G04 and G07–G08, in whatever order the accountable owners choose.
 
 ## 6. Governance Boundaries
 
@@ -118,7 +117,7 @@ This document explicitly does **not**:
 - Approve any migration.
 - Approve any release.
 - Resolve D07's reconciliation-contract feasibility question — G01 remains exactly as open as it was before this document.
-- Select a secret manager or provider — G06 remains exactly as open as it was before this document.
+- Select, configure, or provision any secret manager or provider — G06's provider question was decided separately, in `COS-MVP-003_Phase_7_Secret_Manager_Provider_Decision_Record.md`, not by this document; this document only reflects that outcome and its three still-unconfirmed conditions.
 - Create any Agent Registry or Tool Registry design — G07 and G08 remain at zero documents.
 - Ratify, amend, or reinterpret any of the nineteen Phase 7 decisions or their recorded conditions.
 - Change COS-MVP-002's release status, which remains **Not Released**.
@@ -141,7 +140,8 @@ This document explicitly does **not**:
 - [COS-MVP-003 Phase 8 Transition Readiness Review](COS-MVP-003_Phase_8_Transition_Readiness_Review.md) — source of the Phase 8 readiness classifications restated in Section 5
 - [COS-MVP-003 Phase 7 Decision Ratification Record](COS-MVP-003_Phase_7_Decision_Ratification_Record.md), [COS-MVP-003 Phase 7 Decision Ratification Tracker](COS-MVP-003_Phase_7_Decision_Ratification_Tracker.md) — authoritative source for all nineteen decisions' current status
 - [COS-MVP-003 Phase 7 Execution Safety Foundations Decision Record](COS-MVP-003_Phase_7_Execution_Safety_Foundations_Decision_Record.md) — source of D07's conditions (G01) and D08's resolution
-- [COS-MVP-003 Phase 7 Tool Registry Security Decision Record](COS-MVP-003_Phase_7_Tool_Registry_Security_Decision_Record.md) — source of the secret-manager/provider open question (G06)
+- [COS-MVP-003 Phase 7 Tool Registry Security Decision Record](COS-MVP-003_Phase_7_Tool_Registry_Security_Decision_Record.md) — source of the secret-manager/provider question originally left open as G06
+- [COS-MVP-003 Phase 7 Secret Manager Provider Decision Record](COS-MVP-003_Phase_7_Secret_Manager_Provider_Decision_Record.md) — the authoritative source for G06's resolution (Approved with Conditions, Supabase Vault) and its three attached conditions
 - [COS Architecture Implementation Map](COS_Architecture_Implementation_Map.md) — source of the Agent Registry/Tool Registry Recommended Build Order referenced in G07/G08
 - [COS-MVP-003 Phase 7 Live State Reconciliation Report](COS-MVP-003_Phase_7_Live_State_Reconciliation_Report.md) — confirms no live-database tool was available in that session, the basis for G05's current status
 - [COS-MVP-002 Internal MVP Release Decision Record](COS-MVP-002_Internal_MVP_Release_Decision_Record.md) — confirms COS-MVP-002's release status, unaffected by this document
@@ -151,3 +151,4 @@ This document explicitly does **not**:
 | Version | Change |
 | --- | --- |
 | 1.0 | Initial Phase 7 remaining-gates closure plan: current-state summary confirming decisions complete and zero implementation; an eight-gate inventory (D07 feasibility, three live-validation suites, environment availability, secret-manager decision, and two planning-completeness gates for Agent Registry and Tool Registry full lifecycle) each with category, status, rationale, clearing condition, dependencies, and owner role; a dependency map showing the environment gate as the widest-reaching prerequisite and D07 feasibility as narrowly scoped to reconciliation/recovery tests only; closure-sequence considerations distinguishing what needs no infrastructure, what needs a decision, what needs testing, and what needs new planning documents, offered without mandating an order; a Phase 8 readiness impact analysis finding no capability fully unblocked, three partially unblocked at the design level, and two items ready for unrelated future planning; explicit governance boundaries. No implementation performed, no decision ratified or altered, no release status changed. |
+| 1.1 | Recorded G06's resolution (Approved with Conditions, Supabase Vault, per `COS-MVP-003_Phase_7_Secret_Manager_Provider_Decision_Record.md`) throughout: updated the G06 and G04 inventory rows to reflect the provider direction is selected while three attached conditions and G05 remain outstanding; updated the dependency map's "Reading the map" note, the closure-sequence considerations (G06 removed from "requires a decision," reframed as "conditions requiring confirmation"), the Phase 8 readiness impact analysis (Tool Registry Security explicitly stated as still not fully unblocked), and the Governance Boundaries section's stale "G06 remains exactly as open" line. No configuration performed, no credential created, no infrastructure created, no validation executed, no D01–D19 outcome changed, no release status changed. This document does not itself constitute G06's ratification — it reflects a decision recorded in the separate Decision Record. |
